@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Razorpay Checkout</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<h3>Redirecting to payment...</h3>
+
+<script th:inline="javascript">
+    var options = {
+        "key": "rzp_test_xxxxxxxx", // your Razorpay key
+        "amount": [[${order.totalPrice}]] * 100, // paise
+        "currency": "INR",
+        "name": "My Shop",
+        "description": "Order Payment",
+        "order_id": "[[${order.razorpayOrderId}]]",
+
+        "handler": function (response) {
+            // SUCCESS CALLBACK
+            console.log(response);
+
+            window.location.href =
+                "/payment/success?paymentId=" + response.razorpay_payment_id +
+                "&orderId=" + response.razorpay_order_id +
+                "&signature=" + response.razorpay_signature;
+        },
+
+        "prefill": {
+            "name": "Customer",
+            "email": "customer@email.com",
+            "contact": "9999999999"
+        },
+
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+</script>
+
+</body>
+</html>

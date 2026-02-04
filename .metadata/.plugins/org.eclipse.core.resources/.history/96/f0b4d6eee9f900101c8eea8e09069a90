@@ -1,0 +1,41 @@
+package com.example.demo.Entity;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Table
+public class Product {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	private String name;
+	
+	private String desc;
+	
+	private String title;
+	
+	private BigDecimal price;
+	
+	private int unit_in_stocks;
+	
+	private String imgurl;
+	
+	private boolean active;
+	
+	private Date date_Created;
+	
+	private Date last_update;
+	
+	@ManyToOne
+	@JoinColumn(name ="category_id", nullable = false)
+	private Product_Catagory catagory;
+
+}

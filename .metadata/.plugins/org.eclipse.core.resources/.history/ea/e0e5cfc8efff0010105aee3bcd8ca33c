@@ -1,0 +1,64 @@
+package com.example.demo.Service;
+
+import java.math.BigDecimal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.demo.Dto.*;
+import com.example.demo.Entity.Customer;
+import com.example.demo.Entity.Order;
+import com.example.demo.Entity.OrderItem;
+import com.example.demo.Repository.OrderRepository;
+
+public class OrderServiceClass {
+	
+	
+	@Autowired
+	private OrderRepository order;
+	
+	public Order createOrder(CheckoutRequest cusDto) {
+	Customer c1 = new Customer();
+	
+	c1.setName(cusDto.getName());
+	c1.setPassword(cusDto.getPassword());
+	c1.setPhoneno(cusDto.getPhoneno());
+	
+	Order o1 = new Order();
+	 o1.setCustomer(c1);
+	 o1.setOrderTrackingNumber(generateTrackingNo());
+	 o1.setOrderStatus("CREATED");
+	 o1.setShippingAddress(cusDto.getShippingAddress());
+	 
+	 // multiple order-item have one order
+	 o1.setOrderItems(cusDto.getOrderItems());
+	 
+	 
+	 cusDto.getOrderItems().stream().forEach(i->i.setOrder(o1));
+	 
+	 BigDecimal totalPrice = cusDto.getOrderItems().stream()
+             .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+             .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+     int totalQty = cusDto.getOrderItems().stream()
+             .mapToInt(OrderItem::getQuantity).sum();
+     
+     o1.setTotalPrice(totalPrice);
+     o1.setTotalQuantity(totalQty);
+     
+     
+	 
+	 
+	
+	  
+	 
+	 
+	
+		return null;
+		
+	}
+	
+	public String generateTrackingNo() {
+		return "ORD"+System.currentTimeMillis();
+	}
+
+}

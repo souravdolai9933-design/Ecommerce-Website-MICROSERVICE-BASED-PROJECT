@@ -1,0 +1,27 @@
+package com.example.demo.Dto;
+
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class PagedResponse<T> {
+	
+	
+	 @JsonProperty("_embedded")
+	    private Embedded<T> embedded;
+
+	    public List<T> getContent() {
+	        return embedded.getContent();
+	    }
+
+	    public static class Embedded<T> {
+
+	        @JsonProperty("product")
+	        private List<T> content;
+
+	        public List<T> getContent() {
+	            return content;
+	        }
+	    }
+	}
+
+}

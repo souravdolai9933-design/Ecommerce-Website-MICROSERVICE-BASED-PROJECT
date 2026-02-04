@@ -1,0 +1,22 @@
+package com.example.demo.Controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.demo.Entity.*;
+import com.example.demo.Service.OrderServiceClass;
+import com.example.demo.Dto.*;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/order")
+public class OrderController {
+	
+	@Autowired
+	private OrderServiceClass orderService; 
+	
+	private Order CreateOrder(CheckoutRequest check) {
+		return null;
+		
+	}
+
+}

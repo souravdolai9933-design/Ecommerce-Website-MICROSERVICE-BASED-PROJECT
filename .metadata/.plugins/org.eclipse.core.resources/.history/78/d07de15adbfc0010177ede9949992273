@@ -1,0 +1,62 @@
+package com.example.demo.Service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.example.demo.Dto.PagedResponse;
+import com.example.demo.Dto.ProductDTO;
+ 
+
+@Service
+public class UserService {
+	
+	@Autowired
+	private WebClient webclient;
+	
+	
+	public List<ProductDTO> getAllProduct(int page ,int size){
+		
+		PagedResponse<ProductDTO> response =
+                webclient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/api/product")
+                                .queryParam("page", page)
+                                .queryParam("size", size)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(PagedResponse.class)
+                        .block();
+		
+		System.out.println("Response :"+response.getContent());
+
+		return response.getContent();
+		
+	}
+	
+	public List<ProductDTO> getProductByCategory(Long Categoryid,int page,int size){
+		
+		
+		PagedResponse<ProductDTO> response =
+                webclient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/api/product/search/findByCatagoryId")
+                                .queryParam("page", page)
+                                .queryParam("size", size)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(PagedResponse.class)
+                        .block();
+
+		return response.getContent();
+		
+		
+		
+	}
+	
+	
+	 
+		
+	}

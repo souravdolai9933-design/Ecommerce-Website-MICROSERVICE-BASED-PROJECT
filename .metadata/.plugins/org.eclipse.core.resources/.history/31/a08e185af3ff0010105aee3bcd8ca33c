@@ -1,0 +1,98 @@
+package com.example.demo.Dto;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+
+public class OrderDTO {
+	
+	 private Long ordid;
+
+	    private String orderTrackingNumber;
+	    private Integer totalQuantity;
+	    private BigDecimal totalPrice;
+	    
+	    
+	    private String razorpayOrderId;
+	    private String razorpayPaymentId;
+	    private String razorpaySignature;
+	    private String orderStatus;
+	    
+	     
+	    private CheckoutRequest checkoutReq;
+
+	    
+	    private List<OrderItemDTO> orderItemsDTO;
+
+	     
+	    private ShippingAddressDTO shippingAddressDTO;
+	    
+		public Long getOrdid() {
+			return ordid;
+		}
+		public void setOrdid(Long ordid) {
+			this.ordid = ordid;
+		}
+		public String getOrderTrackingNumber() {
+			return orderTrackingNumber;
+		}
+		public void setOrderTrackingNumber(String orderTrackingNumber) {
+			this.orderTrackingNumber = orderTrackingNumber;
+		}
+		public Integer getTotalQuantity() {
+			return totalQuantity;
+		}
+		public void setTotalQuantity(Integer totalQuantity) {
+			this.totalQuantity = totalQuantity;
+		}
+		public BigDecimal getTotalPrice() {
+			return totalPrice;
+		}
+		public void setTotalPrice(BigDecimal totalPrice) {
+			this.totalPrice = totalPrice;
+		}
+		public String getRazorpayOrderId() {
+			return razorpayOrderId;
+		}
+		public void setRazorpayOrderId(String razorpayOrderId) {
+			this.razorpayOrderId = razorpayOrderId;
+		}
+		public String getRazorpayPaymentId() {
+			return razorpayPaymentId;
+		}
+		public void setRazorpayPaymentId(String razorpayPaymentId) {
+			this.razorpayPaymentId = razorpayPaymentId;
+		}
+		public String getRazorpaySignature() {
+			return razorpaySignature;
+		}
+		public void setRazorpaySignature(String razorpaySignature) {
+			this.razorpaySignature = razorpaySignature;
+		}
+		public String getOrderStatus() {
+			return orderStatus;
+		}
+		public void setOrderStatus(String orderStatus) {
+			this.orderStatus = orderStatus;
+		}
+		 
+		public CheckoutRequest getCheckoutReq() {
+			return checkoutReq;
+		}
+		public void setCheckoutReq(CheckoutRequest checkoutReq) {
+			this.checkoutReq = checkoutReq;
+		}
+		public List<OrderItemDTO> getOrderItemsDTO() {
+			return orderItemsDTO;
+		}
+		public void setOrderItemsDTO(List<OrderItemDTO> orderItemsDTO) {
+			this.orderItemsDTO = orderItemsDTO;
+		}
+		public ShippingAddressDTO getShippingAddressDTO() {
+			return shippingAddressDTO;
+		}
+		public void setShippingAddressDTO(ShippingAddressDTO shippingAddressDTO) {
+			this.shippingAddressDTO = shippingAddressDTO;
+		}
+		    
+}

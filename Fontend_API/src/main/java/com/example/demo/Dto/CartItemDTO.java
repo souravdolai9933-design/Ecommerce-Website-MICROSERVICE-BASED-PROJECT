@@ -1,0 +1,68 @@
+package com.example.demo.Dto;
+
+import java.math.BigDecimal;
+
+public class CartItemDTO {
+
+    private Long productId;
+    private String title;
+    private BigDecimal price;
+    private int quantity;
+    private BigDecimal totalPrice;
+    private String imgurl;
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getImgurl() {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
+
+	@Override
+	public String toString() {
+		return "CartItemDTO [productId=" + productId + ", title=" + title + ", price=" + price + ", quantity="
+				+ quantity + ", totalPrice=" + totalPrice + ", imgurl=" + imgurl + "]";
+	}
+    
+}

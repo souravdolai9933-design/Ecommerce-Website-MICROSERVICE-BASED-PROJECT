@@ -1,0 +1,14 @@
+package com.example.demo.Repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+ 
+
+import com.example.demo.Entity.Product_Category;
+
+@RepositoryRestResource(collectionResourceRel = "Product_Category", path ="product-category")
+
+public interface Product_CtegoryRepository extends JpaRepository<Product_Category, Long>{
+	
+
+}

@@ -1,0 +1,24 @@
+package com.example.demo.Configuiration;
+
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+
+@Configuration
+public class RazorpayConfig {
+	
+	@Value("${razorpay.key.id}")
+    private String KEY_ID;
+
+    @Value("${razorpay.key.secret}")
+    private String KEY_SECRET;
+
+
+    @Bean
+    public RazorpayClient razorpayClient() throws RazorpayException {
+        return new RazorpayClient("KEY_ID", "KEY_SECRET");
+    }
+
+}

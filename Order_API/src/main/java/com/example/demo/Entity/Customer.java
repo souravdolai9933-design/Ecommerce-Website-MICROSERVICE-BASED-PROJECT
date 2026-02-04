@@ -1,0 +1,63 @@
+package com.example.demo.Entity;
+
+import java.util.List;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "customer")
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cusid;
+
+    private String name;
+    private String password;
+    private Long phoneno;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Order> orders;
+
+    // getters & setters
+    public Long getCusid() {
+        return cusid;
+    }
+
+    public void setCusid(Long cusid) {
+        this.cusid = cusid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Long getPhoneno() {
+        return phoneno;
+    }
+
+    public void setPhoneno(Long phoneno) {
+        this.phoneno = phoneno;
+    }
+
+	@Override
+	public String toString() {
+		return "Customer [cusid=" + cusid + ", name=" + name + ", password=" + password + ", phoneno=" + phoneno
+				 + "]";
+	}
+
+	 
+    
+}

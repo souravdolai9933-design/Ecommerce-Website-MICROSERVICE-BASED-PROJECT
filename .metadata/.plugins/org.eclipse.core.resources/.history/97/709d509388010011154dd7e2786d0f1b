@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | Sourav Ecom</title>
+
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .checkout-container {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+        .checkout-card {
+            border-radius: 12px;
+        }
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+        .pay-btn {
+            font-size: 18px;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container checkout-container">
+    <div class="card checkout-card shadow-sm">
+        <div class="card-body p-4">
+
+            <h3 class="text-center mb-4">Checkout</h3>
+
+            <!-- CUSTOMER DETAILS -->
+            <h5 class="section-title">Customer Details</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="name" class="form-control"
+                           placeholder="Enter your full name" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" id="phone" class="form-control"
+                           placeholder="10-digit mobile number" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control"
+                           placeholder="Create a password" required>
+                </div>
+            </div>
+
+            <!-- SHIPPING ADDRESS -->
+            <h5 class="section-title mt-4">Shipping Address</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">House / Flat No</label>
+                    <input type="text" id="house" class="form-control"
+                           placeholder="House / Flat / Apartment No" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">City</label>
+                    <input type="text" id="city" class="form-control"
+                           placeholder="Enter city name" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">State</label>
+                    <input type="text" id="state" class="form-control"
+                           placeholder="Enter state" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Zip Code</label>
+                    <input type="text" id="zipcode" class="form-control"
+                           placeholder="Postal / Zip code" required>
+                </div>
+            </div>
+
+            <!-- PAY BUTTON -->
+            <button type="button"
+                    class="btn btn-primary w-100 mt-4 pay-btn"
+                    onclick="placeOrder()">
+                Pay Securely with Razorpay
+            </button>
+
+            <p class="text-center text-muted mt-3" style="font-size: 14px;">
+                🔒 100% secure payment powered by Razorpay
+            </p>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function placeOrder() {
+
+    fetch("/cart/place-Order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            password: document.getElementById("password").value,
+            phoneno: document.getElementById("phone").value,
+            shippingAddress: {
+                houseno: document.getElementById("house").value,
+                city: document.getElementById("city").value,
+                state: document.getElementById("state").value,
+                country: "India",
+                zipcode: document.getElementById("zipcode").value
+            }
+        })
+    })
+    .then(res => res.json())
+    .then(order => openRazorpay(order))
+    .catch(err => {
+        alert("Order creation failed");
+        console.error(err);
+    });
+}
+
+function openRazorpay(order) {
+
+    var options = {
+        key: "rzp_test_SBA3kqiat8sYVm",
+        amount: order.totalPrice * 100,
+        currency: "INR",
+        name: "Sourav Ecom Shop",
+        description: "Order Payment",
+        order_id: order.razorpayOrderId,
+
+        handler: function (response) {
+            verifyPayment(response);
+        },
+
+        prefill: {
+            name: document.getElementById("name").value,
+            contact: document.getElementById("phone").value
+        },
+
+        theme: { color: "#0d6efd" }
+    };
+
+    new Razorpay(options).open();
+}
+
+function verifyPayment(response) {
+
+    fetch("http://localhost:3333/order/payment-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            razorPayOrderId: response.razorpay_order_id,
+            razorPayPaymentId: response.razorpay_payment_id,
+            razorPaySignature: response.razorpay_signature
+        })
+    })
+    .then(() => window.location.href = "/order-success")
+    .catch(() => alert("Payment verification failed"));
+}
+</script>
+
+</body>
+</html>

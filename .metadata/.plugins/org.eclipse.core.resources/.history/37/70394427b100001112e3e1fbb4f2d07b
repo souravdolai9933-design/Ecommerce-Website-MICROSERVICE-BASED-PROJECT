@@ -1,0 +1,75 @@
+package com.example.demo.Dto;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Cart {
+
+    private final Map<Long, CartItemDTO> items = new HashMap<>();
+
+    public void addItem(ProductDTO product) {
+
+        CartItemDTO item = items.get(product.getId());
+
+        if (item == null) {
+            item = new CartItemDTO();
+            item.setProductId(product.getId());
+            item.setTitle(product.getTitle());
+            item.setPrice(product.getPrice());
+            item.setQuantity(1);
+            item.setImgurl(product.getImgurl());
+        } else {
+            item.setQuantity(item.getQuantity() + 1);
+        }
+
+        updateTotal(item);
+        items.put(product.getId(), item);
+    }
+
+    public void increase(Long productId) {
+        CartItemDTO item = items.get(productId);
+        if (item != null) {
+            item.setQuantity(item.getQuantity() + 1);
+            updateTotal(item);
+        }
+    }
+
+    public void decrease(Long productId) {
+        CartItemDTO item = items.get(productId);
+        if (item != null) {
+            item.setQuantity(item.getQuantity() - 1);
+
+            if (item.getQuantity() <= 0) {
+                items.remove(productId);
+            } else {
+                updateTotal(item);
+            }
+        }
+    }
+
+    private void updateTotal(CartItemDTO item) {
+        item.setTotalPrice(
+            item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+        );
+    }
+
+    public BigDecimal getGrandTotal() {
+        return items.values()
+                .stream()
+                .map(CartItemDTO::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Collection<CartItemDTO> getItems() {
+        return items.values();
+    }
+    
+    public Map<Long,CartItemDTO> getAllItems(){
+    	if(items.isEmpty()) return null;
+    	
+    	return items;
+    	
+    }
+}

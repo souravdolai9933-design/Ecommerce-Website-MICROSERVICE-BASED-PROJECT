@@ -1,0 +1,105 @@
+package com.example.demo.CartController;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.Dto.*;
+import com.example.demo.OrderDto.CheckoutRequestDTO;
+import com.example.demo.OrderDto.ShippingAddressDTO;
+import com.example.demo.Service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/cart")
+public class CartController {
+
+	@Autowired
+	private Cart cart ;
+	
+    @Autowired
+    private UserService productService;
+
+    // ================= ADD TO CART =================
+    @PostMapping("/add/{id}")
+    public String addToCart(@PathVariable Long id, HttpSession session) {
+
+        Cart cart = getCart(session);
+
+        ProductDTO product = productService.getProduct(id);
+         
+        
+        cart.addItem(product);
+
+        return "redirect:/cart/view";
+    }
+
+    // ================= INCREASE =================
+    @GetMapping("/increase/{id}")
+    public String increase(@PathVariable Long id, HttpSession session) {
+
+        Cart cart = getCart(session);
+        cart.increase(id);
+
+        return "redirect:/cart/view";
+    }
+
+    // ================= DECREASE =================
+    @GetMapping("/decrease/{id}")
+    public String decrease(@PathVariable Long id, HttpSession session) {
+
+        Cart cart = getCart(session);
+        cart.decrease(id);
+
+        return "redirect:/cart/view";
+    }
+
+    // ================= VIEW CART =================
+    @GetMapping("/view")
+    public String viewCart(HttpSession session, Model model) {
+
+        Cart cart = getCart(session);
+
+        model.addAttribute("cartItems", cart.getItems());
+        model.addAttribute("grandTotal", cart.getGrandTotal());
+
+        return "cart"; // cart.html
+    }
+
+    // ================= HELPER =================
+    private Cart getCart(HttpSession session) {
+        Cart cart = (Cart) session.getAttribute("cart");
+        if (cart == null) {
+            cart = new Cart();
+            session.setAttribute("cart", cart);
+        }
+        return cart;
+    }
+    
+    @GetMapping("/checkout")
+    public String getCheckoutPage(Model model, HttpSession session) {
+    	
+    	Cart cart = (Cart) session.getAttribute("cart");
+    	System.out.println("Cart items...."+cart);
+    	 
+    	CheckoutRequestDTO checkout = new CheckoutRequestDTO();
+    	checkout.setShippingAddress( new ShippingAddressDTO());
+    	model.addAttribute("checkout",checkout);
+    	return "user/checkout";
+    }
+    
+    @PostMapping("/place-Order")
+    public String saveOrderData(CheckoutRequestDTO d2,HttpSession session, Model model) {
+    	
+    	d2.setOrderItems(productService.convertCartToOrderItem(session));
+    	System.out.println("Before Order data send to frontend.."+d2);
+    	
+      	productService.saveOrder(d2);
+      	
+      	return "Page";
+    	
+    	
+    } 
+}

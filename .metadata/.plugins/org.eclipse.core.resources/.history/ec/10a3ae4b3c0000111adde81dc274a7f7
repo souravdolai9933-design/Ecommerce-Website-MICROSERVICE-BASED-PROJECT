@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+</head>
+<body>
+
+<h2>Checkout</h2>
+
+<form th:action="@{/user/checkout}" 
+      th:object="${checkout}" 
+      method="post">
+
+    <h3>Customer Details</h3>
+
+    <label>Name</label>
+    <input type="text" th:field="*{name}" required />
+
+    <br/>
+
+    <label>Password</label>
+    <input type="password" th:field="*{password}" required />
+
+    <br/>
+
+    <label>Phone</label>
+    <input type="number" th:field="*{phoneno}" required />
+
+    <hr/>
+
+    <h3>Shipping Address</h3>
+
+    <label>House No</label>
+    <input type="text" th:field="*{shippingAddress.houseno}" required />
+
+    <br/>
+
+    <label>City</label>
+    <input type="text" th:field="*{shippingAddress.city}" required />
+
+    <br/>
+
+    <label>State</label>
+    <input type="text" th:field="*{shippingAddress.state}" required />
+
+    <br/>
+
+    <label>Country</label>
+    <input type="text" th:field="*{shippingAddress.country}" required />
+
+    <br/>
+
+    <label>Zipcode</label>
+    <input type="number" th:field="*{shippingAddress.zipcode}" required />
+
+    <br/><br/>
+
+    <button type="submit">Proceed to Payment</button>
+
+</form>
+
+</body>
+</html>

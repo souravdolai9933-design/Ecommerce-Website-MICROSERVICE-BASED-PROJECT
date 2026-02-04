@@ -1,0 +1,97 @@
+package com.example.demo.Service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.example.demo.Dto.CategoryResponse;
+import com.example.demo.Dto.PagedResponse;
+import com.example.demo.Dto.ProductCategoryDTO;
+import com.example.demo.Dto.ProductDTO;
+ 
+
+@Service
+public class UserService {
+	
+	@Autowired
+	private WebClient webclient;
+	
+	
+	public List<ProductDTO> getAllProduct(int page ,int size){
+		
+		PagedResponse<ProductDTO> response =
+                webclient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/api/product")
+                                .queryParam("page", page)
+                                .queryParam("size", size)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(PagedResponse.class)
+                        .block();
+		
+		System.out.println("Response :"+response.getContent());
+
+		return response.getContent();
+		
+	}
+	
+	public List<ProductDTO> getProductByCategory(Long categoryId, int page, int size) {
+
+	    PagedResponse<ProductDTO> response =
+	            webclient.get()
+	                    .uri(uriBuilder -> uriBuilder
+	                            .path("/api/product/search/findByCategoryId") // ✅ FIXED
+	                            .queryParam("id", categoryId)                  // ✅ REQUIRED
+	                            .queryParam("page", page)
+	                            .queryParam("size", size)
+	                            .build())
+	                    .retrieve()
+	                    .bodyToMono(new ParameterizedTypeReference<PagedResponse<ProductDTO>>() {})
+	                    .block();
+
+	    System.out.println("Content :--- " + response.getContent());
+
+	    return response.getContent();
+	}
+	
+	 
+	public List<ProductCategoryDTO> getAllCategory() {
+
+	    CategoryResponse response = webclient.get()
+	            .uri(uriBuilder -> uriBuilder
+	                    .path("/api/product_category")
+	                    .build())
+	            .retrieve()
+	            .bodyToMono(CategoryResponse.class)
+	            .block();
+	    System.out.println("product :"+response.getEmbedded().getProductCategories());
+
+	    return response.getEmbedded().getProductCategories();
+	}
+	
+	
+	public ProductDTO getProduct(Long id) {
+		ProductDTO response =
+                webclient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/api/product/"+id)
+                                .build()
+                        .retrieve()
+                        .bodyToMono(ProductDto.class)
+                        .block();
+		
+		System.out.println("Response :"+response);
+
+		return response;
+		
+	}
+	 
+	
+	
+	 
+		
+	}

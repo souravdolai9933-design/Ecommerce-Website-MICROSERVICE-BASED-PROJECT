@@ -1,0 +1,135 @@
+package com.example.demo.Entity;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name ="product")
+public class Product {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	private String name;
+	
+	private String description;
+	
+	private String title;
+	
+	private BigDecimal price;
+	
+	private int unit_in_stocks;
+	
+	private String imgurl;
+	
+	private boolean active;
+	
+	private Date date_Created;
+	
+	private Date last_update;
+	
+	@ManyToOne
+	@JoinColumn(name ="category_id", nullable = false)
+	private Product_Category catagory;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public int getUnit_in_stocks() {
+		return unit_in_stocks;
+	}
+
+	public void setUnit_in_stocks(int unit_in_stocks) {
+		this.unit_in_stocks = unit_in_stocks;
+	}
+
+	public String getImgurl() {
+		return imgurl;
+	}
+
+	public void setImgurl(String imgurl) {
+		this.imgurl = imgurl;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public Date getDate_Created() {
+		return date_Created;
+	}
+
+	public void setDate_Created(Date date_Created) {
+		this.date_Created = date_Created;
+	}
+
+	public Date getLast_update() {
+		return last_update;
+	}
+
+	public void setLast_update(Date last_update) {
+		this.last_update = last_update;
+	}
+
+	public Product_Category getCatagory() {
+		return catagory;
+	}
+
+	public void setCatagory(Product_Category catagory) {
+		this.catagory = catagory;
+	}
+	
+	
+
+}

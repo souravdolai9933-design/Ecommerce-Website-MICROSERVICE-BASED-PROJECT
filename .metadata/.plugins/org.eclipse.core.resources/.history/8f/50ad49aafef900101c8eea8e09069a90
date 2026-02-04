@@ -1,0 +1,11 @@
+package com.example.demo.Repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
+
+import com.example.demo.Entity.Product_Category;
+
+@RepositoryRestController
+public interface Product_CtegoryRepository extends JpaRepository<Product_Category, Long>{
+
+}

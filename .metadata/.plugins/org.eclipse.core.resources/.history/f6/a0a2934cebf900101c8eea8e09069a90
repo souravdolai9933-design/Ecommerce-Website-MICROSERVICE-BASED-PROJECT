@@ -1,0 +1,29 @@
+package com.example.demo.Entity;
+
+import java.util.Locale.Category;
+import java.util.Set;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="product_category")
+public class Product_Category {
+	
+	@Id
+	
+	private Integer id;
+	private String name;
+	
+	@OneToMany(mappedBy = "catagory")
+	
+	private Set<Product> productlist;
+	
+	
+	
+	
+	
+
+}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shopping Cart</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #f6f8fc, #e9edf5);
+        }
+
+        .container {
+            width: 85%;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #232f3e;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #232f3e;
+            color: white;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: center;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f3f6fb;
+        }
+
+        img {
+            width: 75px;
+            border-radius: 8px;
+        }
+
+        .price {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .qty-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            padding: 6px 12px;
+            background: #232f3e;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #ff9900;
+            transform: scale(1.05);
+        }
+
+        .total {
+            text-align: right;
+            font-size: 22px;
+            margin-top: 25px;
+            font-weight: bold;
+            color: #232f3e;
+        }
+
+        /* BUTTON SECTION */
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 26px;
+            font-size: 16px;
+            border-radius: 30px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-home {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-home:hover {
+            background: #cfcfcf;
+        }
+
+        .btn-order {
+            background: linear-gradient(135deg, #ff9900, #ff6600);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 6px 15px rgba(255,153,0,0.4);
+        }
+
+        .btn-order:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255,153,0,0.6);
+        }
+
+        /* EMPTY CART */
+        .empty-cart {
+            text-align: center;
+            padding: 50px 0;
+            color: #888;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🛒 Your Shopping Cart</h2>
+
+    <table th:if="${#lists.size(cartItems) > 0}">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="item : ${cartItems}">
+                <td>
+                    <img th:src="@{'http://localhost:8085/uploads/images/' + ${item.imgurl}}"
+                         alt="Product">
+                </td>
+
+                <td th:text="${item.title}"></td>
+
+                <td class="price">₹ <span th:text="${item.price}"></span></td>
+
+                <td>
+                    <div class="qty-box">
+                        <a th:href="@{/cart/decrease/{id}(id=${item.productId})}" class="qty-btn">−</a>
+                        <span th:text="${item.quantity}"></span>
+                        <a th:href="@{/cart/increase/{id}(id=${item.productId})}" class="qty-btn">+</a>
+                    </div>
+                </td>
+
+                <td class="price">₹ <span th:text="${item.totalPrice}"></span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="empty-cart" th:if="${#lists.size(cartItems) == 0}">
+        Your cart is empty 🛍️
+    </div>
+
+    <div class="total" th:if="${#lists.size(cartItems) > 0}">
+        Grand Total: ₹ <span th:text="${grandTotal}"></span>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <!-- ACTION BUTTONS -->
+<div class="cart-actions">
+
+    <!-- Back to Home : ALWAYS VISIBLE -->
+    <a th:href="@{/user/all}" class="btn btn-home">⬅ Back to Home</a>
+
+    <!-- Place Order : ONLY WHEN CART HAS ITEMS -->
+    <form th:if="${#lists.size(cartItems) > 0}"
+          th:action="@{/user/checkout}"
+          method="get">
+        <button type="submit" class="btn btn-order">
+            Place Order
+        </button>
+    </form>
+
+</div>
+</div>
+
+</body>
+</html>

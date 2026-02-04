@@ -1,0 +1,41 @@
+package com.example.demo.Service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.demo.Dto.*;
+ 
+import com.example.demo.Entity.Customer;
+import com.example.demo.Entity.Order;
+import com.example.demo.Repository.OrderRepository;
+
+public class OrderServiceClass {
+	
+	
+	@Autowired
+	private OrderRepository order;
+	
+	public Order createOrder(CheckoutRequest cusDto) {
+	Customer c1 = new Customer();
+	
+	c1.setName(cusDto.getName());
+	c1.setPassword(cusDto.getPassword());
+	c1.setPhoneno(cusDto.getPhoneno());
+	
+	Order o1 = new Order();
+	 o1.setCustomer(c1);
+	 o1.setOrderTrackingNumber(generateTrackingNo());
+	 o1.setOrderStatus("CREATED");
+	 o1.setOrderItems( );
+	
+	 
+	
+		
+		return null;
+		
+	}
+	
+	public String generateTrackingNo() {
+		return "ORD"+System.currentTimeMillis();
+	}
+
+}

@@ -1,0 +1,44 @@
+package com.example.demo.Intercommunication;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.demo.Dto.PagedResponse;
+import com.example.demo.Dto.ProductDTO;
+
+@FeignClient(name = "api-gateway", url = "http://localhost:3333")
+public interface ProductClient {
+
+    // ✅ get all products (Spring Data REST → HAL → PAGED)
+    @GetMapping(
+        value = "/api/product",
+        consumes = "application/hal+json"
+    )
+    PagedResponse<ProductDTO> getAllProduct(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+    );
+
+    // ✅ search by category
+    @GetMapping(
+        value = "/api/product/search/findByCategoryId",
+        consumes = "application/hal+json"
+    )
+    PagedResponse<ProductDTO> findByCategoryId(
+            @RequestParam("id") Integer id,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+    );
+
+    // ✅ search by name
+    @GetMapping(
+        value = "/api/product/search/findByNameContainingIgnoreCase",
+        consumes = "application/hal+json"
+    )
+    PagedResponse<ProductDTO> findByName(
+            @RequestParam("name") String name,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+    );
+}

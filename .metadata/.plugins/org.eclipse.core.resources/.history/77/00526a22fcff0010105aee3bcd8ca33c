@@ -1,0 +1,154 @@
+package com.example.demo.Entity;
+import java.math.BigDecimal;
+import org.springframework.data.annotation.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import jakarta.persistence.*;
+import jakarta.persistence.Id;
+ 
+ 
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ordid;
+
+    private String orderTrackingNumber;
+    private Integer totalQuantity;
+    private BigDecimal totalPrice;
+    
+    
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+    private String razorpaySignature;
+    private String orderStatus;
+    
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime orderCreated;
+    
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime orderUpdated;
+
+    // 🔗 Many Orders → One Customer
+    @ManyToOne 
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    // 🔗 One Order → Many OrderItems
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
+
+    // 🔗 One Order → One Address
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shipping_address_id")
+    private ShippingAddress shippingAddress;
+
+	public Long getOrdid() {
+		return ordid;
+	}
+
+	public void setOrdid(Long ordid) {
+		this.ordid = ordid;
+	}
+
+	public String getOrderTrackingNumber() {
+		return orderTrackingNumber;
+	}
+
+	public void setOrderTrackingNumber(String orderTrackingNumber) {
+		this.orderTrackingNumber = orderTrackingNumber;
+	}
+
+	public Integer getTotalQuantity() {
+		return totalQuantity;
+	}
+
+	public void setTotalQuantity(Integer totalQuantity) {
+		this.totalQuantity = totalQuantity;
+	}
+
+	public BigDecimal getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(BigDecimal totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
+	public LocalDateTime getOrderCreated() {
+		return orderCreated;
+	}
+
+	public void setOrderCreated(LocalDateTime orderCreated) {
+		this.orderCreated = orderCreated;
+	}
+
+	public LocalDateTime getOrderUpdated() {
+		return orderUpdated;
+	}
+
+	public void setOrderUpdated(LocalDateTime orderUpdated) {
+		this.orderUpdated = orderUpdated;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public List<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(List<OrderItem> orderItems) {
+		this.orderItems = orderItems;
+	}
+
+	public ShippingAddress getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(ShippingAddress shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public String getRazorpayOrderId() {
+		return razorpayOrderId;
+	}
+
+	public void setRazorpayOrderId(String razorpayOrderId) {
+		this.razorpayOrderId = razorpayOrderId;
+	}
+
+	public String getRazorpayPaymentId() {
+		return razorpayPaymentId;
+	}
+
+	public void setRazorpayPaymentId(String razorpayPaymentId) {
+		this.razorpayPaymentId = razorpayPaymentId;
+	}
+
+	public String getRazorpaySignature() {
+		return razorpaySignature;
+	}
+
+	public void setRazorpaySignature(String razorpaySignature) {
+		this.razorpaySignature = razorpaySignature;
+	}   
+}

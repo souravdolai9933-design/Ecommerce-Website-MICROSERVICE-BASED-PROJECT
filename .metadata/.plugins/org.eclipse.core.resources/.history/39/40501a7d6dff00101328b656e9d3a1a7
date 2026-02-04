@@ -1,0 +1,14 @@
+package com.example.demo.Configuiration;
+
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+import org.springframework.*;
+
+public class RazorpayConfig {
+
+    @Bean
+    public RazorpayClient razorpayClient() throws RazorpayException {
+        return new RazorpayClient("KEY_ID", "KEY_SECRET");
+    }
+
+}

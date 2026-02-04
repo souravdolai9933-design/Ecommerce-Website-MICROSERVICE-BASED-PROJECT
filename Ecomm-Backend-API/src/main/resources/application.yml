@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ecommerce-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce_application
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  data:
+    rest:
+      base-path: /api
+
+server:
+  port: 9092

@@ -1,0 +1,26 @@
+package com.example.demo.Controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.Entity.Dto.ProductCategoryDto;
+import com.example.demo.Repository.ProductCategoryRepository;
+
+@RestController
+public class ProductCategoryController {
+	
+	@Autowired
+	private ProductCategoryRepository repo;
+	
+	public List<ProductCategoryDto> getAllCategory(){
+		
+		
+		return repo.findAll().stream()
+				.map(c -> new ProductCategoryDto(c.getId(), c.getName()))
+                .toList();
+		
+	}
+
+}

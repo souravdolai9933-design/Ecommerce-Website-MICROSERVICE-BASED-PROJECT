@@ -1,0 +1,72 @@
+package com.example.demo.CartController;
+
+public class CartController {
+	
+	@Autowired
+    private ProductService productService;
+
+    @PostMapping("/add/{id}")
+    public CartResponse addToCart(@PathVariable Long id, HttpSession session) {
+
+        Cart cart = (Cart) session.getAttribute("cart");
+        if (cart == null) cart = new Cart();
+
+        ProductDTO product = productService.getProduct(id);
+        cart.addItem(product);
+
+        session.setAttribute("cart", cart);
+
+        CartItemDTO item = cart.getItems()
+                .stream()
+                .filter(i -> i.getProductId().equals(id))
+                .findFirst()
+                .get();
+
+        return buildResponse(cart, item);
+    }
+
+    @PostMapping("/increase/{id}")
+    public CartResponse increase(@PathVariable Long id, HttpSession session) {
+
+        Cart cart = (Cart) session.getAttribute("cart");
+        cart.increase(id);
+
+        CartItemDTO item = cart.getItems()
+                .stream()
+                .filter(i -> i.getProductId().equals(id))
+                .findFirst()
+                .get();
+
+        return buildResponse(cart, item);
+    }
+
+    @PostMapping("/decrease/{id}")
+    public CartResponse decrease(@PathVariable Long id, HttpSession session) {
+
+        Cart cart = (Cart) session.getAttribute("cart");
+        cart.decrease(id);
+
+        CartItemDTO item = cart.getItems()
+                .stream()
+                .filter(i -> i.getProductId().equals(id))
+                .orElse(null);
+
+        return buildResponse(cart, item);
+    }
+
+    private CartResponse buildResponse(Cart cart, CartItemDTO item) {
+
+        CartResponse res = new CartResponse();
+
+        if (item != null) {
+            res.setQuantity(item.getQuantity());
+            res.setItemTotal(item.getTotalPrice());
+        } else {
+            res.setQuantity(0);
+            res.setItemTotal(0);
+        }
+
+        res.setGrandTotal(cart.getGrandTotal());
+        return res;
+    }
+}

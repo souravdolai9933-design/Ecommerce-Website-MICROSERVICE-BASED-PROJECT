@@ -1,0 +1,28 @@
+package com.example.demo.Dto;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+public class CategoryResponse {
+	
+	 @JsonProperty("_embedded")
+	    private Embedded embedded;
+
+	  
+	    public static class Embedded {
+	        @JsonProperty("productCategories")   // <-- must match JSON key
+	        private List<ProductCategoryDTO> productCategories;
+	    }
+
+
+		public Embedded getEmbedded() {
+			return embedded;
+		}
+
+
+		public void setEmbedded(Embedded embedded) {
+			this.embedded = embedded;
+		}
+	    
+	    
+
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Razorpay Checkout</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<h3>Redirecting to payment...</h3>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var options = {
+        key: "rzp_test_SBA3kqiat8sYVm",
+        amount: /*[[${order.totalPrice}]]*/ 0 * 100,
+        currency: "INR",
+        name: "My Shop",
+        description: "Order Payment",
+        order_id: /*[[${order.razorpayOrderId}]]*/ "",
+
+        handler: function (response) {
+            // ✅ SUCCESS
+            window.location.href =
+                "/payment/success?paymentId=" + response.razorpay_payment_id +
+                "&orderId=" + response.razorpay_order_id +
+                "&signature=" + response.razorpay_signature;
+        }
+    };
+
+    var rzp = new Razorpay(options);
+
+    // ❌ FAILURE / CANCEL HANDLER
+    rzp.on('payment.failed', function (response) {
+        window.location.href = "/payment/failure";
+    });
+
+    rzp.open();
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

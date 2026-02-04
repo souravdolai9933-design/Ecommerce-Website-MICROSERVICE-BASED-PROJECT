@@ -1,0 +1,26 @@
+package com.example.demo.Dto;
+
+public class CartResponse {
+	
+	    private int quantity;
+	    private double itemTotal;
+	    private double grandTotal;
+		public int getQuantity() {
+			return quantity;
+		}
+		public void setQuantity(int quantity) {
+			this.quantity = quantity;
+		}
+		public double getItemTotal() {
+			return itemTotal;
+		}
+		public void setItemTotal(double itemTotal) {
+			this.itemTotal = itemTotal;
+		}
+		public double getGrandTotal() {
+			return grandTotal;
+		}
+		public void setGrandTotal(double grandTotal) {
+			this.grandTotal = grandTotal;
+		}
+}

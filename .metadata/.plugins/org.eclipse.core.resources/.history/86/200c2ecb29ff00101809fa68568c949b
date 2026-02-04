@@ -1,0 +1,29 @@
+package com.example.demo.Entity;
+
+import jakarta.persistence.Entity;
+
+@Entity
+@Table(name = "order_items")
+public class OrderItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long productId;      // from Product Service
+    private String productName;
+    private BigDecimal price;
+    private int quantity;
+
+    // 🔗 Many Items → One Order
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    // getters & setters
+}
+	
+	
+
+
+}

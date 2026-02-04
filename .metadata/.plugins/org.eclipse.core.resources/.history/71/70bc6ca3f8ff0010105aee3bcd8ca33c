@@ -1,0 +1,7 @@
+spring.application.name=Order_API
+# Razorpay configuration
+razorpay.key.id=rzp_test_SBA3kqiat8sYVm
+razorpay.key.secret=zY6CC3kBpgedqVVyaArx9vF7
+
+server.port=8089
+
