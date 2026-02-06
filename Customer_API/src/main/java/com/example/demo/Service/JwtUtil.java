@@ -1,31 +1,35 @@
 package com.example.demo.Service;
 
-import java.sql.Date;
+import java.security.Key;
+import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-	
-	public final String serect ="Sourav_Ecom_WEB_993311";
-	
-	@SuppressWarnings("deprecation")
-	public String generateToken(String email) {
+
+    
+    private static final String SECRET =
+            "my-super-secret-key-my-super-secret-key";
+
+    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+
+    public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(new Date(0))
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-                .signWith(SignatureAlgorithm.HS256, serect)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 hour
+                .signWith(key)
                 .compact();
     }
-	
-	
-	public String extractEmail(String token) {
-        return Jwts.parser()
-                .setSigningKey(serect)
+
+    public String extractEmail(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -39,7 +43,4 @@ public class JwtUtil {
             return false;
         }
     }
-	
-	
-
 }

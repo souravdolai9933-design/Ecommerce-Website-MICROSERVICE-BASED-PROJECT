@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: customer-api
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_auth
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: souravdolai9933@gmail.com
+    password: nvne esec nzvz uiml
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+server:
+  port: 9097

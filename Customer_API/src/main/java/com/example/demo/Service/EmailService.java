@@ -18,6 +18,8 @@ public class EmailService {
 		
 		try {
 			
+			System.out.println("Controller Enter Email service..");
+			
 		MimeMessage minimemessage =	mailsender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(minimemessage);
 		
@@ -31,6 +33,7 @@ public class EmailService {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Email send sucessfully..");
 		return true;
 	}
 }

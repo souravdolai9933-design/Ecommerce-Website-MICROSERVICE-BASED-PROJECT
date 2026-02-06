@@ -1,5 +1,0 @@
-package com.example.demo.Entity.Dto;
-
-public class ProductCategoryDto {
-
-}
