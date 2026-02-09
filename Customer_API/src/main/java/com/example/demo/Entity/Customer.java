@@ -17,11 +17,12 @@ public class Customer {
 	private Long id;
 	private String name;
 	
-	 @Column(unique = true, nullable = false)
+	@Column(unique = true, nullable = false)
 	private String email;
 	 
 	private String password;
 	
+	@Column(unique = true, nullable = false)
 	private Long phoneno;
 	
 	private boolean enable = true;
@@ -94,4 +95,14 @@ public class Customer {
 	public void setEnable(boolean enable) {
 		this.enable = enable;
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", phoneno="
+				+ phoneno + ", enable=" + enable + ", createdAt=" + createdAt + "]";
+	}
+	
+	
 }

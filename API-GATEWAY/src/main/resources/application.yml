@@ -24,3 +24,9 @@ spring:
           uri: lb://order-api
           predicates:
             - Path=/order/**,/cart/**
+
+        # Customer / Auth API
+        - id: customer-api-route
+          uri: lb://customer-api
+          predicates:
+            - Path=/auth/**

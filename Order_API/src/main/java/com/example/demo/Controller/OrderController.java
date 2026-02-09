@@ -22,7 +22,7 @@ public class OrderController {
 	@PostMapping("/create")
 	public Order CreateOrder(@RequestBody CheckoutRequest check) throws RazorpayException {
 		
-		System.out.println("I am hit the controller...");
+		System.out.println("I am hit the Create Order controller...");
 		
 		 return orderService.createOrder(check);
 			

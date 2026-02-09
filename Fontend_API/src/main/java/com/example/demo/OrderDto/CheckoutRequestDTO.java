@@ -6,8 +6,9 @@ public class CheckoutRequestDTO {
 	
 	   private Long cusid;
 	    private String name;
-	    private String password;
 	    private Long phoneno;
+	    private Long rootUserId;
+	    
 	    
 	    private ShippingAddressDTO shippingAddress;
 	    
@@ -27,14 +28,6 @@ public class CheckoutRequestDTO {
 
 		public void setName(String name) {
 			this.name = name;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
 		}
 
 		public Long getPhoneno() {
@@ -57,14 +50,23 @@ public class CheckoutRequestDTO {
 			return orderItems;
 		}
 
+		
+		public Long getRootUserId() {
+			return rootUserId;
+		}
+
+		public void setRootUserId(Long rootUserId) {
+			this.rootUserId = rootUserId;
+		}
+
 		public void setOrderItems(List<OrderItemDTO> orderItems) {
 			this.orderItems = orderItems;
 		}
 
 		@Override
 		public String toString() {
-			return "CheckoutRequestDTO [cusid=" + cusid + ", name=" + name + ", password=" + password + ", phoneno="
-					+ phoneno + ", shippingAddress=" + shippingAddress + ", orderItems=" + orderItems + "]";
+			return "CheckoutRequestDTO [cusid=" + cusid + ", name=" + name + ", phoneno="
+					+ phoneno + ", shippingAddress=" + shippingAddress + ", orderItems=" + orderItems + "]"+" ,RootUserId "+rootUserId;
 		}
 		
 		

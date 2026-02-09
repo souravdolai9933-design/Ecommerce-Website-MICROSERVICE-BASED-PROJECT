@@ -13,9 +13,9 @@ public class Customer {
     private Long cusid;
 
     private String name;
-    private String password;
+     
     private Long phoneno;
-
+    
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Order> orders;
 
@@ -35,15 +35,7 @@ public class Customer {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getPassword() {
-        return password;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+ 
     public Long getPhoneno() {
         return phoneno;
     }
@@ -54,10 +46,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [cusid=" + cusid + ", name=" + name + ", password=" + password + ", phoneno=" + phoneno
+		return "Customer [cusid=" + cusid + ", name=" + name + ", password=" + phoneno
 				 + "]";
 	}
-
-	 
-    
 }

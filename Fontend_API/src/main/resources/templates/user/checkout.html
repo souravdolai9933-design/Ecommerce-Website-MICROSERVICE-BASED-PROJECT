@@ -56,12 +56,6 @@
                     <input type="text" id="phone" class="form-control"
                            placeholder="10-digit mobile number" required>
                 </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control"
-                           placeholder="Create a password" required>
-                </div>
             </div>
 
             <!-- SHIPPING ADDRESS -->
@@ -112,16 +106,7 @@
 <script>
 /* ---------------- FORM VALIDATION ---------------- */
 
-const fields = [
-    "name",
-    "phone",
-    "password",
-    "house",
-    "city",
-    "state",
-    "zipcode"
-];
-
+const fields = ["name", "phone", "house", "city", "state", "zipcode"];
 const payBtn = document.getElementById("payBtn");
 
 function checkFormFilled() {
@@ -149,7 +134,6 @@ function placeOrder() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             name: document.getElementById("name").value,
-            password: document.getElementById("password").value,
             phoneno: document.getElementById("phone").value,
             shippingAddress: {
                 houseno: document.getElementById("house").value,

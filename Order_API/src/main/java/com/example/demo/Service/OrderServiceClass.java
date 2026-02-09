@@ -32,10 +32,11 @@ public class OrderServiceClass {
 	private RazorpayProperties razorpayProperties;
 	
 	public Order createOrder(CheckoutRequest cusDto) throws RazorpayException {
+		
+		System.out.println("I am inside Order Create Methode...");
 	Customer c1 = new Customer();
 	
 	c1.setName(cusDto.getName());
-	c1.setPassword(cusDto.getPassword());
 	c1.setPhoneno(cusDto.getPhoneno());
 	
 	customerRepo.save(c1);
@@ -66,7 +67,7 @@ public class OrderServiceClass {
      
      System.out.println("Before save order data into database...");
      System.out.println("order api data "+o1);
-     
+     o1.setRootUserId(cusDto.getRootUserId());
           Order savedOrder = order.save(o1);
           
       System.out.println("order is created...");

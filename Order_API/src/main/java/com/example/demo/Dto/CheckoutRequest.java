@@ -10,12 +10,24 @@ public class CheckoutRequest {
 	
 	    private Long cusid;
 	    private String name;
-	    private String password;
 	    private Long phoneno;
+	    private Long rootUserId;
 	    
 	    private ShippingAddress shippingAddress;
 	    
 	    private List<OrderItem> orderItems;
+
+
+	    
+	    
+		public Long getRootUserId() {
+			return rootUserId;
+		}
+
+
+		public void setRootUserId(Long rootUserId) {
+			this.rootUserId = rootUserId;
+		}
 
 
 		public Long getCusid() {
@@ -36,17 +48,6 @@ public class CheckoutRequest {
 		public void setName(String name) {
 			this.name = name;
 		}
-
-
-		public String getPassword() {
-			return password;
-		}
-
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-
 
 		public Long getPhoneno() {
 			return phoneno;
@@ -79,7 +80,7 @@ public class CheckoutRequest {
 
 		@Override
 		public String toString() {
-			return "CheckoutRequest [cusid=" + cusid + ", name=" + name + ", password=" + password + ", phoneno="
+			return "CheckoutRequest [cusid=" + cusid + ", name=" + name + ", phoneno="
 					+ phoneno + ", shippingAddress=" + shippingAddress + ", orderItems=" + orderItems + "]";
 		}
 		 

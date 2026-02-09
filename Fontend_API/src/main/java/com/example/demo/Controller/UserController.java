@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 import java.util.List;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,13 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.Dto.ProductCategoryDTO;
 import com.example.demo.Dto.ProductDTO;
-import com.example.demo.OrderDto.CheckoutRequestDTO;
-import com.example.demo.OrderDto.ShippingAddressDTO;
+import com.example.demo.RootcustomerDTO.ErrorResponse;
+import com.example.demo.RootcustomerDTO.LoginUserRequestDTO;
+import com.example.demo.RootcustomerDTO.RegistrationRequestDTO;
+ 
+ 
 import com.example.demo.Service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -78,5 +84,91 @@ public class UserController {
 		return "user/masterView";
     	
     }
-     
+    @GetMapping("/getForm")
+    public String getRegistrationForm( Model model) {
+    	
+    	model.addAttribute("registrationForm", new RegistrationRequestDTO());
+    	
+		return "user/registration";
+    	
+    }
+    
+    // Handle Form Submit
+    @PostMapping("/save-Form")
+    public String saveRegistrationForm(
+            @ModelAttribute("registrationForm") RegistrationRequestDTO r3,
+            Model model) {
+    	
+    	System.out.println("I am hitting save registration Form methode...");
+
+        // Password length validation
+        if (r3.getPassword() == null || r3.getPassword().length() < 8) {
+            model.addAttribute("errorMsg",
+                    "Password must be at least 8 characters long");
+            return "user/registration";
+        }
+
+        // Password match validation (FIXED)
+        if (!r3.getPassword().equals(r3.getConfirmpassword())) {
+            model.addAttribute("errorMsg",
+                    "Password and Confirm Password must match");
+            return "user/registration";
+        }
+
+        // Call backend API
+        String isRegistered = service.userRegistration(r3);
+        
+        System.out.println("isRegistered --->:"+isRegistered);
+
+        if (isRegistered.equals("Registration Sucess")) {
+            model.addAttribute("successMsg",
+                    "User registered successfully!");
+            model.addAttribute("registrationForm",
+                    new RegistrationRequestDTO());
+            
+        } else if(isRegistered.equals("Email Alreadyexists")){
+           model.addAttribute("errorMsg",
+                    "Registration failed. Email already exist.");
+         model.addAttribute("registrationForm",
+                   r3);
+            
+        }else if(isRegistered.equals("Phone no Already exists")) {
+        	 model.addAttribute("errorMsg",
+                     "Registration failed. Phone no already exist.");
+          model.addAttribute("registrationForm",
+                    r3);
+        	
+        }
+
+        return "user/registration";
+    }
+    
+    @GetMapping("/login")
+    public String showLoginForm(Model model) {
+        model.addAttribute("loginForm", new LoginUserRequestDTO());
+        return "user/login";
+    }
+
+    @PostMapping("/login")
+    public String login(
+            @ModelAttribute("loginForm") LoginUserRequestDTO dto,
+            RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
+        System.out.println("I am hitting Login method.....");
+
+        String response = service.userLogin(dto, request);
+        System.out.println("Response " + response);
+
+        if ("User Not Found".equals(response) || "Incorrect Password".equals(response)) {
+            redirectAttributes.addFlashAttribute("error", response);
+            return "redirect:/user/login";
+        }
+
+        // ✅ SUCCESS
+        return "redirect:/user/all";
+    }
+
 }
+
+     
+

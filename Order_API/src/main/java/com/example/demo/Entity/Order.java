@@ -28,6 +28,8 @@ public class Order {
     private String razorpayPaymentId;
     private String razorpaySignature;
     private String orderStatus;
+    
+    private Long rootUserId;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -86,6 +88,14 @@ public class Order {
 
 	public String getRazorpayOrderId() {
 		return razorpayOrderId;
+	}
+	
+	public Long getRootUserId() {
+		return rootUserId;
+	}
+
+	public void setRootUserId(Long rootUserId) {
+		this.rootUserId = rootUserId;
 	}
 
 	public void setRazorpayOrderId(String razorpayOrderId) {
@@ -165,8 +175,4 @@ public class Order {
 				 + ", orderItems=" + orderItems + ", shippingAddress=" + shippingAddress
 				+ "]";
 	}
-    
-
-	
-    // getters & setters (unchanged)
-}
+ }

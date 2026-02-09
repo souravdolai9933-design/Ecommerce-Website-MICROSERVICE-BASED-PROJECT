@@ -1,4 +1,4 @@
-package com.example.demo.CartController;
+ package com.example.demo.CartController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +12,7 @@ import com.example.demo.OrderDto.PaymentVerifyRequestDTO;
 import com.example.demo.OrderDto.ShippingAddressDTO;
 import com.example.demo.Service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -65,6 +66,8 @@ public class CartController {
 
         CheckoutRequestDTO checkout = new CheckoutRequestDTO();
         checkout.setShippingAddress(new ShippingAddressDTO());
+        
+        System.out.println("Get Checkout Methode "+checkout);
 
         model.addAttribute("checkout", checkout);
         return "user/checkout";
@@ -75,15 +78,23 @@ public class CartController {
     @ResponseBody
     public OrderDTO placeOrder(
             @RequestBody CheckoutRequestDTO request,
-            HttpSession session) {
+            HttpSession session ,HttpServletRequest request2  ) {
 
         session.setAttribute("Customer Name", request.getName());
 
         request.setOrderItems(
                 productService.convertCartToOrderItem(session)
         );
+        
+        Long rootUserId = productService.getRootUserId( );
+        request.setRootUserId(rootUserId);
+        
+       
+        
+        request.setRootUserId(rootUserId);
+        System.out.println("Finel data Before sending Order Api : "+request);
 
-        return productService.saveOrder(request);
+        return productService.saveOrder(request, request2);
     }
 
     // ================= PAYMENT VERIFY =================

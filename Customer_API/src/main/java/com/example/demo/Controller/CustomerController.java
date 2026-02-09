@@ -12,7 +12,10 @@ import com.example.demo.DTO.ForgatPasswordRequestDTO;
 import com.example.demo.DTO.RegistrationReq;
 import com.example.demo.DTO.ResetPasswordReq;
 import com.example.demo.DTO.UserLoginReqDTO;
-import com.example.demo.Service.AuthService; 
+import com.example.demo.Service.AuthService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession; 
 
 @RestController
 @RequestMapping("/auth")
@@ -22,23 +25,19 @@ public class CustomerController {
 	private AuthService authService;
 	
 	@PostMapping("/register")
-	public ResponseEntity<?> customerRegister(@RequestBody RegistrationReq r1) {
+	
+	public String customerRegister(@RequestBody RegistrationReq r1) {
 		
-	    boolean b1= authService.Registration(r1);
-	    
-	     return ResponseEntity.ok("User Register");	
+	     return authService.Registration(r1);
 	}
 	
 	@PostMapping("/login")
-	public String logIN(@RequestBody UserLoginReqDTO logDto) {
+	public String logIN(@RequestBody UserLoginReqDTO logDto ) {
 		
-    String jwtToken = authService.login(logDto);
-    System.out.println(jwtToken);
-    
-    return jwtToken;
+         return authService.login(logDto);
 	}
 	
-	@PostMapping("/forgatPass")
+	@PostMapping("/forgot-password")
 	public ResponseEntity<?> forgatPasswordReq(@RequestBody ForgatPasswordRequestDTO d2){
 		
 		authService.ForgotPasswordReq(d2);
@@ -54,5 +53,15 @@ public class CustomerController {
 	return ResponseEntity.ok("Password Reset complete");
 	 
 		
+	} 
+	
+	@GetMapping("/root-id")
+	public Long getRootUserId( ) {
+		return authService.getRootCustomerId();
+	}
+	
+	@GetMapping("/msg")
+	public String message() {
+		return "Hii message from Customer API";
 	}
 }
