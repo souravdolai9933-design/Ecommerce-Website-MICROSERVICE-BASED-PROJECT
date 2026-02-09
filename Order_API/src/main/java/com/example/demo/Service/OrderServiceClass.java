@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.Configuiration.RazorpayProperties;
 import com.example.demo.Dto.*;
-import com.example.demo.Entity.Customer;
+ 
 import com.example.demo.Entity.Order;
 import com.example.demo.Entity.OrderItem;
-import com.example.demo.Repository.CustomerRepo;
+import com.example.demo.Entity.ShippingAddress;
 import com.example.demo.Repository.OrderRepository;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -21,9 +21,6 @@ public class OrderServiceClass {
 	
 	 @Autowired
 	 private RazorpayClient razorpayClient;
-	 
-	 @Autowired
-	 private CustomerRepo customerRepo;
 	
 	@Autowired
 	private OrderRepository order;
@@ -33,26 +30,30 @@ public class OrderServiceClass {
 	
 	public Order createOrder(CheckoutRequest cusDto) throws RazorpayException {
 		
-		System.out.println("I am inside Order Create Methode...");
-	Customer c1 = new Customer();
-	
-	c1.setName(cusDto.getName());
-	c1.setPhoneno(cusDto.getPhoneno());
-	
-	customerRepo.save(c1);
-	System.out.println("Customer data seve..."+c1);
-	 
 	Order o1 = new Order();
-	 o1.setCustomer(c1);
+	 
+	 o1.setRootUserId(cusDto.getRootUserId());
 	 o1.setOrderTrackingNumber(generateTrackingNo());
 	 o1.setOrderStatus("CREATED");
-	 o1.setShippingAddress(cusDto.getShippingAddress());
+	  
 	 
 	 System.out.println("Order data set processing...");
-	 // multiple order-item have one order
+	 // set shipping adress into order for adress frezz
+	 ShippingAddress addr = cusDto.getShippingAddress();
+	 o1.setDeliveryName(addr.getReceiverName());
+	 o1.setDeliveryPhone(addr.getReceiverPhnNo());
+	 o1.setDeliveryAddress(
+             addr.getHouseno() + ", " +
+             addr.getCity() + ", " +
+             addr.getState() + ", " +
+             addr.getCountry() + " - " +
+             addr.getZipcode()
+     );
+	 
+	 // set Order Items
 	 o1.setOrderItems(cusDto.getOrderItems());
 	 
-	 
+	 // Set orderid for each order item
 	 cusDto.getOrderItems().stream().forEach(i->i.setOrder(o1));
 	 
 	 BigDecimal totalPrice = cusDto.getOrderItems().stream()
@@ -67,7 +68,7 @@ public class OrderServiceClass {
      
      System.out.println("Before save order data into database...");
      System.out.println("order api data "+o1);
-     o1.setRootUserId(cusDto.getRootUserId());
+     
           Order savedOrder = order.save(o1);
           
       System.out.println("order is created...");

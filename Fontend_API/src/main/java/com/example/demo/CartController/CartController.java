@@ -80,7 +80,7 @@ public class CartController {
             @RequestBody CheckoutRequestDTO request,
             HttpSession session ,HttpServletRequest request2  ) {
 
-        session.setAttribute("Customer Name", request.getName());
+       // session.setAttribute("Customer Name", request.get);
 
         request.setOrderItems(
                 productService.convertCartToOrderItem(session)
@@ -102,9 +102,9 @@ public class CartController {
     public String verifyPayment(
             @RequestBody PaymentVerifyRequestDTO request,
             Model model,
-            HttpSession session) {
+            HttpSession session, HttpServletRequest request2) {
 
-        OrderDTO order = productService.verifyAndUpdateOrder(request);
+        OrderDTO order = productService.verifyAndUpdateOrder(request,request2);
 
         model.addAttribute("orderId", order.getRazorpayOrderId());
         model.addAttribute(

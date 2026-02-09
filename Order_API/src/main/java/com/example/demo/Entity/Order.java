@@ -24,35 +24,20 @@ public class Order {
     private Integer totalQuantity;
     private BigDecimal totalPrice;
 
+    // Razor pay details
     private String razorpayOrderId;
     private String razorpayPaymentId;
     private String razorpaySignature;
     private String orderStatus;
     
     private Long rootUserId;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime orderCreated;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime orderUpdated;
-
-    // 🔗 Many Orders → One Customer
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    // 🔗 One Order → Many OrderItems
+    
+    private String deliveryName;
+    private Long deliveryPhone;
+    private String deliveryAddress;
+    
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<OrderItem> orderItems;
-
-    // 🔗 One Order → One Address
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "shipping_address_id")
-    private ShippingAddress shippingAddress;
+    private List<OrderItem> orderItems ;
 
 	public Long getOrdid() {
 		return ordid;
@@ -89,14 +74,6 @@ public class Order {
 	public String getRazorpayOrderId() {
 		return razorpayOrderId;
 	}
-	
-	public Long getRootUserId() {
-		return rootUserId;
-	}
-
-	public void setRootUserId(Long rootUserId) {
-		this.rootUserId = rootUserId;
-	}
 
 	public void setRazorpayOrderId(String razorpayOrderId) {
 		this.razorpayOrderId = razorpayOrderId;
@@ -126,28 +103,36 @@ public class Order {
 		this.orderStatus = orderStatus;
 	}
 
-	public LocalDateTime getOrderCreated() {
-		return orderCreated;
+	public Long getRootUserId() {
+		return rootUserId;
 	}
 
-	public void setOrderCreated(LocalDateTime orderCreated) {
-		this.orderCreated = orderCreated;
+	public void setRootUserId(Long rootUserId) {
+		this.rootUserId = rootUserId;
 	}
 
-	public LocalDateTime getOrderUpdated() {
-		return orderUpdated;
+	public String getDeliveryName() {
+		return deliveryName;
 	}
 
-	public void setOrderUpdated(LocalDateTime orderUpdated) {
-		this.orderUpdated = orderUpdated;
+	public void setDeliveryName(String deliveryName) {
+		this.deliveryName = deliveryName;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public Long getDeliveryPhone() {
+		return deliveryPhone;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setDeliveryPhone(Long deliveryPhone) {
+		this.deliveryPhone = deliveryPhone;
+	}
+
+	public String getDeliveryAddress() {
+		return deliveryAddress;
+	}
+
+	public void setDeliveryAddress(String deliveryAddress) {
+		this.deliveryAddress = deliveryAddress;
 	}
 
 	public List<OrderItem> getOrderItems() {
@@ -158,21 +143,13 @@ public class Order {
 		this.orderItems = orderItems;
 	}
 
-	public ShippingAddress getShippingAddress() {
-		return shippingAddress;
-	}
-
-	public void setShippingAddress(ShippingAddress shippingAddress) {
-		this.shippingAddress = shippingAddress;
-	}
-
 	@Override
 	public String toString() {
 		return "Order [ordid=" + ordid + ", orderTrackingNumber=" + orderTrackingNumber + ", totalQuantity="
 				+ totalQuantity + ", totalPrice=" + totalPrice + ", razorpayOrderId=" + razorpayOrderId
 				+ ", razorpayPaymentId=" + razorpayPaymentId + ", razorpaySignature=" + razorpaySignature
-				+ ", orderStatus=" + orderStatus + ", orderCreated=" + orderCreated + ", orderUpdated=" + orderUpdated
-				 + ", orderItems=" + orderItems + ", shippingAddress=" + shippingAddress
-				+ "]";
+				+ ", orderStatus=" + orderStatus + ", rootUserId=" + rootUserId + ", deliveryName=" + deliveryName
+				+ ", deliveryPhone=" + deliveryPhone + ", deliveryAddress=" + deliveryAddress + "]";
 	}
+	
  }

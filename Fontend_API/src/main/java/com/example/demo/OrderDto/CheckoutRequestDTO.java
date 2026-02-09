@@ -2,42 +2,20 @@ package com.example.demo.OrderDto;
 
 import java.util.List;
 
+ 
+
 public class CheckoutRequestDTO {
 	
-	   private Long cusid;
-	    private String name;
-	    private Long phoneno;
-	    private Long rootUserId;
-	    
-	    
-	    private ShippingAddressDTO shippingAddress;
-	    
-	    private List<OrderItemDTO> orderItems;
+	 // log in customer 
+    private Long rootUserId;
 
-		public Long getCusid() {
-			return cusid;
-		}
+    // Selected OR newly created address
+    private ShippingAddressDTO shippingAddress;
 
-		public void setCusid(Long cusid) {
-			this.cusid = cusid;
-		}
+    // Cart items
+    private List<OrderItemDTO> orderItems;
 
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Long getPhoneno() {
-			return phoneno;
-		}
-
-		public void setPhoneno(Long phoneno) {
-			this.phoneno = phoneno;
-		}
-
+    
 		public ShippingAddressDTO getShippingAddress() {
 			return shippingAddress;
 		}
@@ -65,9 +43,8 @@ public class CheckoutRequestDTO {
 
 		@Override
 		public String toString() {
-			return "CheckoutRequestDTO [cusid=" + cusid + ", name=" + name + ", phoneno="
-					+ phoneno + ", shippingAddress=" + shippingAddress + ", orderItems=" + orderItems + "]"+" ,RootUserId "+rootUserId;
+			return "CheckoutRequestDTO [cusid=" + ", name="   + ", phoneno="
+					  + ", shippingAddress=" + shippingAddress + ", orderItems=" + orderItems + "]"+" ,RootUserId "+rootUserId;
 		}
-		
 		
 }

@@ -142,11 +142,14 @@ public class UserService {
 	}
 
 	
-	public OrderDTO verifyAndUpdateOrder (PaymentVerifyRequestDTO paymentVerify) {
+	public OrderDTO verifyAndUpdateOrder (PaymentVerifyRequestDTO paymentVerify, HttpServletRequest request) {
+		
+		String authHeader = getAuthToken(request);
 		
 		return webclient.post()
 				.uri(i->i.path("/order/payment-verify")
 						.build())
+				.header(HttpHeaders.AUTHORIZATION,authHeader)
 				.bodyValue(paymentVerify)
 				.retrieve()
 				.bodyToMono(OrderDTO.class)
