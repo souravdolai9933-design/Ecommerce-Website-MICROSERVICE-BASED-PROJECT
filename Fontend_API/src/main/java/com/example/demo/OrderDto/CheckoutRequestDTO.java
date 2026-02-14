@@ -11,6 +11,9 @@ public class CheckoutRequestDTO {
 
     // Selected OR newly created address
     private ShippingAddressDTO shippingAddress;
+    
+     private Long  existingAddressId;
+     
 
     // Cart items
     private List<OrderItemDTO> orderItems;
@@ -29,6 +32,14 @@ public class CheckoutRequestDTO {
 		}
 
 		
+		public Long getExistingAddressId() {
+			return existingAddressId;
+		}
+
+		public void setExistingAddressId(Long existingAddressId) {
+			this.existingAddressId = existingAddressId;
+		}
+
 		public Long getRootUserId() {
 			return rootUserId;
 		}
@@ -43,8 +54,7 @@ public class CheckoutRequestDTO {
 
 		@Override
 		public String toString() {
-			return "CheckoutRequestDTO [cusid=" + ", name="   + ", phoneno="
-					  + ", shippingAddress=" + shippingAddress + ", orderItems=" + orderItems + "]"+" ,RootUserId "+rootUserId;
+			return "CheckoutRequestDTO [rootUserId=" + rootUserId + ", shippingAddress=" + shippingAddress
+					+ ", orderItems=" + orderItems + "]";
 		}
-		
 }

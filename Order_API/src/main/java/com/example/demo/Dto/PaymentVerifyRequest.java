@@ -1,10 +1,16 @@
 package com.example.demo.Dto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PaymentVerifyRequest {
 	
-	private String razorPayPaymentId;
-	private String razorPayOrderId;
-	private String razorPaySignature;
+	  @JsonProperty("razorpay_payment_id")
+	    private String razorPayPaymentId;
+
+	    @JsonProperty("razorpay_order_id")
+	    private String razorPayOrderId;
+
+	    @JsonProperty("razorpay_signature")
+	    private String razorPaySignature;
 	
 	public String getRazorPayPaymentId() {
 		return razorPayPaymentId;
@@ -24,4 +30,11 @@ public class PaymentVerifyRequest {
 	public void setRazorPaySignature(String razorPaySignature) {
 		this.razorPaySignature = razorPaySignature;
 	}
+	@Override
+	public String toString() {
+		return "PaymentVerifyRequest [razorPayPaymentId=" + razorPayPaymentId + ", razorPayOrderId=" + razorPayOrderId
+				+ ", razorPaySignature=" + razorPaySignature + "]";
+	}
+	
+	
 }

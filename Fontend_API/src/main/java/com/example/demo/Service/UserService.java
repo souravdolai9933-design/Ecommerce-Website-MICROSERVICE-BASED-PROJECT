@@ -22,14 +22,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import com.example.demo.OrderDto.*;
-import com.example.demo.RootcustomerDTO.ErrorResponse;
+ 
 import com.example.demo.RootcustomerDTO.LoginUserRequestDTO;
 import com.example.demo.RootcustomerDTO.RegistrationRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
- 
- 
- 
 
 @Service
 public class UserService {
@@ -140,8 +136,98 @@ public class UserService {
 	            .bodyToMono(OrderDTO.class)
 	            .block();
 	}
-
 	
+   public List<ShippingAddressDTO> getShippingAddress(Long rootUserId, HttpServletRequest request){
+	   
+	   String authHeader = getAuthToken(request);
+
+	    return webclient.get()
+	            .uri(uriBuilder ->
+	                    uriBuilder
+	                        .path("/order/get-Address/{rootUserId}")
+	                        .build(rootUserId)
+	            )
+	            .header(HttpHeaders.AUTHORIZATION, authHeader)
+	            .retrieve()
+	            .bodyToFlux(ShippingAddressDTO.class)
+	            .collectList()
+	            .block();
+   }
+   public ShippingAddressDTO getShippingAddressById(Long id, HttpServletRequest req) {
+	   
+	   System.out.println("#########I am inside get shippingAddress mth ID +"+id);
+		
+		String authHeader = getAuthToken(req);
+		
+		 return webclient.get()
+				 .uri(i->i.path("/order/getAddress/{id}")
+						 .build(id))
+				 .header(HttpHeaders.AUTHORIZATION,authHeader)
+				 .retrieve()
+				 .bodyToMono(ShippingAddressDTO.class)
+				 .block();
+		             
+	}
+   
+   
+   public ShippingAddressDTO getDefaultAddress(Long rootUserId, HttpServletRequest req) {
+
+	    String authHeader = getAuthToken(req);
+
+	    return webclient
+	            .get()
+	            .uri(uriBuilder -> uriBuilder
+	                    .path("/order/default-Address/{rootUserId}")
+	                    .build(rootUserId))
+	            .header(HttpHeaders.AUTHORIZATION, authHeader)
+	            .retrieve()
+	            .bodyToMono(ShippingAddressDTO.class)
+	            .block();
+	}
+
+   
+   public ShippingAddressDTO saveShippingAddress(ShippingAddressDTO address, HttpServletRequest req) {
+
+	    String authHeader = getAuthToken(req);
+
+	    return webclient.put()
+	            .uri("/order/save-Address")
+	            .header(HttpHeaders.AUTHORIZATION, authHeader)
+	            .bodyValue(address)
+	            .retrieve()
+	            .bodyToMono(ShippingAddressDTO.class)
+	            .block();
+	}
+
+   
+   
+   public String updateShippingAddress(HttpServletRequest req,
+           ShippingAddressDTO addressDTO) {
+	   
+	   String authHeader = getAuthToken(req);
+
+	    return webclient.put()
+	            .uri("/order/update-Address")
+	            .header(HttpHeaders.AUTHORIZATION, authHeader)
+	            .bodyValue(addressDTO)
+	            .retrieve()
+	            .bodyToMono(String.class)
+	            .block();
+   }
+   
+   public String deleteShippingAddress(HttpServletRequest req,
+           Long addressId) {
+	    String authHeader = getAuthToken(req);
+
+	    return webclient.delete()
+	            .uri("/order/delete-Address/{id}", addressId)
+	            .header(HttpHeaders.AUTHORIZATION, authHeader)
+	            .retrieve()
+	            .bodyToMono(String.class)
+	            .block();
+   }
+   
+                  
 	public OrderDTO verifyAndUpdateOrder (PaymentVerifyRequestDTO paymentVerify, HttpServletRequest request) {
 		
 		String authHeader = getAuthToken(request);
@@ -176,6 +262,8 @@ public class UserService {
 		return orderItem;
 		
 	     }
+	
+	
 	  
 	public String userRegistration(RegistrationRequestDTO regisDTO) {
 
@@ -204,6 +292,8 @@ public class UserService {
             
             System.out.println("Token generate Sucessfully Token :"+token );
             session.setAttribute("JWT_TOKEN", token);
+            
+            
 			return token;
     }
 	
@@ -227,6 +317,29 @@ public class UserService {
 	    }
 
 	    return "Bearer " + token;
+	}
+	
+	public Long sendRootUserId( HttpServletRequest request) {
+		
+		Long rootUserId = getRootUserId();
+		
+		if(rootUserId==null) throw new RuntimeException("User Not login");
+
+	    System.out.println("Controller Inside sendRootUserId method....");
+
+	    String authHeader = getAuthToken(request);
+	    System.out.println("Auth Header Generated Successfully: " + authHeader);
+
+	    return webclient
+	            .get()
+	            .uri(uriBuilder -> uriBuilder
+	                    .path("/order/root-id")
+	                    .queryParam("id", rootUserId)
+	                    .build())
+	            .header(HttpHeaders.AUTHORIZATION, authHeader)
+	            .retrieve()
+	            .bodyToMono(Long.class)
+	            .block();
 	}
 
 }

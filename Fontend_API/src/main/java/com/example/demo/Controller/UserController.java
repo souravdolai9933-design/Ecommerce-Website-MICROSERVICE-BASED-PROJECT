@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping("/all")
     public String getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "8") int size,
             Model model, HttpSession session) {
 
         List<ProductDTO> products = service.getAllProduct(page, size);
@@ -59,7 +59,7 @@ public class UserController {
     public String getProductBythroughTheCategry(
             @RequestParam Long id,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "8") int size,
             Model model, HttpSession session) {
 
         List<ProductDTO> products = service.getProductByCategory(id, page, size);
@@ -167,6 +167,7 @@ public class UserController {
         // ✅ SUCCESS
         return "redirect:/user/all";
     }
+    
 
 }
 

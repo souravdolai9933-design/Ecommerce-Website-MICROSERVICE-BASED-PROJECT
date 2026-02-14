@@ -1,35 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Checkout | Sourav Ecom</title>
 
-    <!-- Razorpay SDK -->
+    <!-- Razorpay -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #f1f3f6;
         }
+
         .checkout-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 40px auto;
         }
-        .checkout-card {
+
+        .card {
             border-radius: 12px;
         }
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 8px;
+
+        .address-box {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            position: relative;
         }
+
+        .address-box:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+        .address-actions {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+        }
+
+        .address-actions i {
+            font-size: 18px;
+            margin-left: 12px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .address-actions i:hover {
+            color: #0d6efd;
+        }
+
         .pay-btn {
             font-size: 18px;
-            padding: 12px;
+            padding: 14px;
+        }
+
+        /* ===== STICKY ORDER SUMMARY ===== */
+        .order-summary {
+            position: sticky;
+            top: 20px;
         }
     </style>
 </head>
@@ -37,170 +75,233 @@
 <body>
 
 <div class="container checkout-container">
-    <div class="card checkout-card shadow-sm">
-        <div class="card-body p-4">
 
-            <h3 class="text-center mb-4">Checkout</h3>
+    <!-- ================= FLASH MESSAGE ================= -->
+    <div th:if="${sucmsg}" id="flashMsg" class="alert alert-success text-center">
+        <span th:text="${sucmsg}"></span>
+    </div>
 
-            <!-- CUSTOMER DETAILS -->
-            <h5 class="section-title">Customer Details</h5>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" id="name" class="form-control"
-                           placeholder="Enter your full name" required>
+    <div class="row g-4">
+
+        <!-- ================= LEFT SIDE ================= -->
+        <div class="col-md-8">
+            <div class="card shadow-sm p-4">
+
+                <h4 class="mb-3">Delivery Address</h4>
+
+                <!-- ADDRESS OPTIONS -->
+                <div class="mb-3">
+                    <input type="radio" name="addressOption" value="current" checked onclick="toggleAddress()"> Current
+                    <input type="radio" name="addressOption" value="existing" class="ms-4" onclick="toggleAddress()"> Existing
+                    <input type="radio" name="addressOption" value="new" class="ms-4" onclick="toggleAddress()"> New
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Phone Number</label>
-                    <input type="text" id="phone" class="form-control"
-                           placeholder="10-digit mobile number" required>
+                <!-- ================= CURRENT ADDRESS ================= -->
+                <div id="currentAddressSection">
+                    <div class="address-box">
+
+                        <div class="address-actions">
+                            <a th:href="@{/cart/address/edit/{id}(id=${defaultcheckout.shippingAddress.addid})}">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a th:href="@{/cart/address/delete/{id}(id=${defaultcheckout.shippingAddress.addid})}"
+                               onclick="return confirm('Delete this address?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+
+                        <input type="radio" name="selectedAddress"
+                               th:value="${defaultcheckout.shippingAddress.addid}" checked>
+
+                        <strong class="ms-2"
+                                th:text="${defaultcheckout.shippingAddress.receiverName}"></strong><br>
+
+                        <span th:text="${defaultcheckout.shippingAddress.houseno}"></span>,
+                        <span th:text="${defaultcheckout.shippingAddress.city}"></span>,
+                        <span th:text="${defaultcheckout.shippingAddress.state}"></span>,
+                        <span th:text="${defaultcheckout.shippingAddress.country}"></span> -
+                        <span th:text="${defaultcheckout.shippingAddress.zipcode}"></span><br>
+
+                        📞 <span th:text="${defaultcheckout.shippingAddress.receiverPhnNo}"></span>
+                    </div>
                 </div>
+
+                <!-- ================= EXISTING ADDRESSES ================= -->
+                <div id="existingAddressSection" style="display:none;">
+                    <div th:each="addr : ${shippingAdresslist}" class="address-box">
+
+                        <div class="address-actions">
+                            <a th:href="@{/cart/address/edit/{id}(id=${addr.addid})}">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a th:href="@{/cart/address/delete/{id}(id=${addr.addid})}"
+                               onclick="return confirm('Delete this address?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+
+                        <input type="radio" name="selectedAddress" th:value="${addr.addid}">
+                        <strong class="ms-2" th:text="${addr.receiverName}"></strong><br>
+
+                        <span th:text="${addr.houseno}"></span>,
+                        <span th:text="${addr.city}"></span>,
+                        <span th:text="${addr.state}"></span> -
+                        <span th:text="${addr.zipcode}"></span><br>
+
+                        📞 <span th:text="${addr.receiverPhnNo}"></span>
+                    </div>
+                </div>
+
+                <!-- ================= NEW ADDRESS (NO SUBMIT BUTTON) ================= -->
+                <div id="newAddressSection" style="display:none;">
+                    <h5>Add New Address</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="receiverName" placeholder="Receiver Name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="receiverPhnNo" placeholder="Phone Number">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="houseno" placeholder="House / Flat No">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="city" placeholder="City">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="state" placeholder="State">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="country" placeholder="Country">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" id="zipcode" placeholder="Zipcode">
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- SHIPPING ADDRESS -->
-            <h5 class="section-title mt-4">Shipping Address</h5>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">House / Flat No</label>
-                    <input type="text" id="house" class="form-control"
-                           placeholder="House / Flat / Apartment No" required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">City</label>
-                    <input type="text" id="city" class="form-control"
-                           placeholder="Enter city name" required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">State</label>
-                    <input type="text" id="state" class="form-control"
-                           placeholder="Enter state" required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Zip Code</label>
-                    <input type="text" id="zipcode" class="form-control"
-                           placeholder="Postal / Zip code" required>
-                </div>
-            </div>
-
-            <!-- PAY BUTTON -->
-            <button type="button"
-                    id="payBtn"
-                    class="btn btn-primary w-100 mt-4 pay-btn"
-                    onclick="placeOrder()"
-                    disabled>
-                Pay Securely with Razorpay
-            </button>
-
-            <p class="text-center text-muted mt-3" style="font-size: 14px;">
-                🔒 100% secure payment powered by Razorpay
-            </p>
-
         </div>
+
+        <!-- ================= RIGHT SIDE (STICKY) ================= -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-4 order-summary">
+                <h5>Order Summary</h5>
+                <p>Total Items: <strong th:text="${totalItems}">0</strong></p>
+                <p>Total Price: ₹<strong th:text="${totalPrice}">0</strong></p>
+
+                <button class="btn btn-primary w-100 pay-btn mt-3" onclick="placeOrder()">
+                    Pay Securely
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>
 
+<!-- ================= SCRIPT ================= -->
 <script>
-/* ---------------- FORM VALIDATION ---------------- */
+function toggleAddress() {
+    const option = document.querySelector('input[name="addressOption"]:checked').value;
 
-const fields = ["name", "phone", "house", "city", "state", "zipcode"];
-const payBtn = document.getElementById("payBtn");
-
-function checkFormFilled() {
-    let allFilled = true;
-
-    fields.forEach(id => {
-        if (document.getElementById(id).value.trim() === "") {
-            allFilled = false;
-        }
-    });
-
-    payBtn.disabled = !allFilled;
+    document.getElementById("currentAddressSection").style.display = option === "current" ? "block" : "none";
+    document.getElementById("existingAddressSection").style.display = option === "existing" ? "block" : "none";
+    document.getElementById("newAddressSection").style.display = option === "new" ? "block" : "none";
 }
-
-fields.forEach(id => {
-    document.getElementById(id).addEventListener("input", checkFormFilled);
-});
-
-/* ---------------- ORDER CREATION ---------------- */
 
 function placeOrder() {
 
+    const option = document.querySelector('input[name="addressOption"]:checked').value;
+
+    let payload = {
+        checkout: {},
+        newAddress: null
+    };
+
+    console.log("Selected option 👉", option);
+
+    // ================= CURRENT / EXISTING ADDRESS =================
+    if (option === "current" || option === "existing") {
+
+        const selected = document.querySelector('input[name="selectedAddress"]:checked');
+
+        if (!selected) {
+            alert("Please select an address");
+            return;
+        }
+
+        payload.checkout.existingAddressId = Number(selected.value);
+    }
+
+    // ================= NEW ADDRESS =================
+    if (option === "new") {
+
+        payload.newAddress = {
+            receiverName: document.getElementById("receiverName").value,
+            receiverPhnNo: document.getElementById("receiverPhnNo").value,
+            houseno: document.getElementById("houseno").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            country: document.getElementById("country").value,
+            zipcode: document.getElementById("zipcode").value
+        };
+
+        // Basic validation
+        for (const key in payload.newAddress) {
+            if (!payload.newAddress[key]) {
+                alert("Please fill all address fields");
+                return;
+            }
+        }
+    }
+
+    console.log("FINAL PAYLOAD 🚀", payload);
+
     fetch("/cart/place-Order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            name: document.getElementById("name").value,
-            phoneno: document.getElementById("phone").value,
-            shippingAddress: {
-                houseno: document.getElementById("house").value,
-                city: document.getElementById("city").value,
-                state: document.getElementById("state").value,
-                country: "India",
-                zipcode: document.getElementById("zipcode").value
-            }
-        })
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
     })
     .then(res => res.json())
     .then(order => openRazorpay(order))
-    .catch(err => {
-        alert("Order creation failed");
-        console.error(err);
-    });
+    .catch(err => console.error("Order error:", err));
 }
 
-/* ---------------- RAZORPAY ---------------- */
-
+// ================= RAZORPAY =================
 function openRazorpay(order) {
-
-    var options = {
+    new Razorpay({
         key: "rzp_test_SBA3kqiat8sYVm",
         amount: order.totalPrice * 100,
         currency: "INR",
-        name: "Sourav Ecom Shop",
-        description: "Order Payment",
         order_id: order.razorpayOrderId,
-
-        handler: function (response) {
-            verifyPayment(response);
-        },
-
-        prefill: {
-            name: document.getElementById("name").value,
-            contact: document.getElementById("phone").value
-        },
-
-        theme: { color: "#0d6efd" }
-    };
-
-    new Razorpay(options).open();
+        handler: res => verifyPayment(res)
+    }).open();
 }
 
-/* ---------------- PAYMENT VERIFY ---------------- */
-
 function verifyPayment(response) {
-
     fetch("/cart/payment-verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            razorPayOrderId: response.razorpay_order_id,
-            razorPayPaymentId: response.razorpay_payment_id,
-            razorPaySignature: response.razorpay_signature
-        })
+        body: JSON.stringify(response)
     })
     .then(res => res.text())
     .then(html => {
         document.open();
         document.write(html);
         document.close();
-    })
-    .catch(() => alert("Payment verification failed"));
+    });
 }
+
+// ================= FLASH MESSAGE =================
+setTimeout(() => {
+    const msg = document.getElementById("flashMsg");
+    if (msg) msg.style.display = "none";
+}, 5000);
 </script>
+
 
 </body>
 </html>

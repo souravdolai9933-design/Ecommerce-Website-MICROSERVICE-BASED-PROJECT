@@ -19,6 +19,7 @@ public class OrderItem {
     
     
     @ManyToOne
+    @JsonBackReference
     private Order order;
 
 

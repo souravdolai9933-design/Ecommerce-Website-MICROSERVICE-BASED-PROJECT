@@ -1,14 +1,16 @@
 package com.example.demo.Entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
+ 
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import jakarta.persistence.*;
+ 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -36,7 +38,17 @@ public class Order {
     private Long deliveryPhone;
     private String deliveryAddress;
     
+    @CreationTimestamp
+    @Column(name = "order_created", updatable = false)
+    private LocalDateTime orderCreated;
+
+    @UpdateTimestamp
+    @Column(name = "order_updated")
+    private LocalDateTime orderUpdated;
+
+    
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OrderItem> orderItems ;
 
 	public Long getOrdid() {
