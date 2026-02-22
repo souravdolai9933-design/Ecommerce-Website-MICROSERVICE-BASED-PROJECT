@@ -90,6 +90,12 @@ public class OrderController {
 		
 	    return orderService.getRootUserId(id);
 	}
+	
+	@GetMapping("/order-list")
+	public List<Order> GetAllOrder(@RequestParam Long rootUserId){
+		
+		return orderService.getAllOrder(rootUserId);
+	}
 
 	
 	@GetMapping("/call")

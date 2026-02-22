@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+        }
+
+        .order-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .items-section {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .no-order {
+            text-align: center;
+            font-size: 20px;
+            color: red;
+            margin-top: 50px;
+        }
+    </style>
+
+    <script>
+        function toggleItems(id) {
+            var element = document.getElementById("items-" + id);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>My Orders</h2>
+
+    <!-- If No Order Found -->
+    <div th:if="${orderlist == null}" class="no-order">
+        No Order Found
+    </div>
+
+    <!-- Orders Loop -->
+    <div th:each="order : ${orderlist}" class="order-card">
+
+        <div class="order-header">
+            <div>
+                <strong>Order Tracking:</strong>
+                <span th:text="${order.orderTrackingNumber}"></span>
+            </div>
+            <div>
+                <strong>Status:</strong>
+                <span th:text="${order.orderStatus}"></span>
+            </div>
+        </div>
+
+        <p><strong>Total Quantity:</strong>
+            <span th:text="${order.totalQuantity}"></span>
+        </p>
+
+        <p><strong>Total Price:</strong> ₹
+            <span th:text="${order.totalPrice}"></span>
+        </p>
+
+        <p><strong>Delivery Name:</strong>
+            <span th:text="${order.deliveryName}"></span>
+        </p>
+
+        <p><strong>Delivery Address:</strong>
+            <span th:text="${order.deliveryAddress}"></span>
+        </p>
+
+        <!-- View Items Button -->
+        <button class="btn"
+                th:onclick="'toggleItems(' + ${order.ordid} + ')'">
+            View Items
+        </button>
+
+        <!-- Hidden Items Section -->
+        <div class="items-section"
+             th:id="'items-' + ${order.ordid}">
+
+            <h4>Order Items</h4>
+
+            <div th:each="item : ${order.orderItems}">
+                <p>
+                    <strong>Product:</strong>
+                    <span th:text="${item.productName}"></span>
+                </p>
+
+                <p>
+                    <strong>Price:</strong> ₹
+                    <span th:text="${item.price}"></span>
+                </p>
+
+                <p>
+                    <strong>Quantity:</strong>
+                    <span th:text="${item.quantity}"></span>
+                </p>
+
+                <hr/>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

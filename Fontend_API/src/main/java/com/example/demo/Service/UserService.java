@@ -39,32 +39,46 @@ public class UserService {
 	 private final ObjectMapper mapper = new ObjectMapper();
 	
 	
-	public List<ProductDTO> getAllProduct(int page ,int size){
-		
-		PagedResponse<ProductDTO> response =
-                webclient.get()
-                        .uri(uriBuilder -> uriBuilder
-                                .path("/api/product")
-                                .queryParam("page", page)
-                                .queryParam("size", size)
-                                .build())
-                        .retrieve()
-                        .bodyToMono(PagedResponse.class)
-                        .block();
-		
-		System.out.println("Response :"+response.getContent());
+	 public PagedResponse<ProductDTO> getAllProduct(int page ,int size){
 
-		return response.getContent();
-		
-	}
+		    return webclient.get()
+		            .uri(uriBuilder -> uriBuilder
+		                    .path("/api/product")
+		                    .queryParam("page", page)
+		                    .queryParam("size", size)
+		                    .build())
+		            .retrieve()
+		            .bodyToMono(new ParameterizedTypeReference<PagedResponse<ProductDTO>>() {})
+		            .block();
+		}
 	
-	public List<ProductDTO> getProductByCategory(Long categoryId, int page, int size) {
+	 public PagedResponse<ProductDTO> getProductByCategory(Long categoryId, int page, int size) {
+
+		    PagedResponse<ProductDTO> response =
+		            webclient.get()
+		                    .uri(uriBuilder -> uriBuilder
+		                            .path("/api/product/search/findByCategoryId")
+		                            .queryParam("id", categoryId)
+		                            .queryParam("page", page)
+		                            .queryParam("size", size)
+		                            .build())
+		                    .retrieve()
+		                    .bodyToMono(new ParameterizedTypeReference<PagedResponse<ProductDTO>>() {})
+		                    .block();
+
+		    System.out.println("Content :--- " + response.getContent());
+
+		    return response;   // ✅ FIXED
+		}
+	
+	
+	public PagedResponse<ProductDTO> getProductByName(String name, int page, int size) {
 
 	    PagedResponse<ProductDTO> response =
 	            webclient.get()
 	                    .uri(uriBuilder -> uriBuilder
-	                            .path("/api/product/search/findByCategoryId") // ✅ FIXED
-	                            .queryParam("id", categoryId)                  // ✅ REQUIRED
+	                            .path("/api/product/search/findByNameContainingIgnoreCase")
+	                            .queryParam("name", name)
 	                            .queryParam("page", page)
 	                            .queryParam("size", size)
 	                            .build())
@@ -74,9 +88,8 @@ public class UserService {
 
 	    System.out.println("Content :--- " + response.getContent());
 
-	    return response.getContent();
+	    return response;   // ✅ FIXED
 	}
-	
 	 
 	public List<ProductCategoryDTO> getAllCategory() {
 
@@ -226,6 +239,23 @@ public class UserService {
 	            .bodyToMono(String.class)
 	            .block();
    }
+   
+   
+   public List<OrderDTO> getAllOrderByRootUser( HttpServletRequest req) {
+
+	    String authHeader = getAuthToken(req);   // Bearer token
+
+	    Long rootUserId = getRootUserId();
+	    return webclient.get()
+	            .uri(uriBuilder -> uriBuilder
+	                    .path("/order/order-list")
+	                    .queryParam("rootUserId", rootUserId)   // ✅ REQUIRED
+	                    .build())
+	            .header("Authorization", authHeader)            // ✅ Pass token
+	            .retrieve()
+	            .bodyToMono(new ParameterizedTypeReference<List<OrderDTO>>() {})
+	            .block();
+	}
    
                   
 	public OrderDTO verifyAndUpdateOrder (PaymentVerifyRequestDTO paymentVerify, HttpServletRequest request) {

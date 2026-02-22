@@ -10,12 +10,16 @@ import com.example.demo.Entity.Product;
 
 @RepositoryRestResource(path = "product")
 public interface ProductRepository extends JpaRepository<Product, Long> {
-	
-	
-	Page<Product> findByCategoryId(@Param("id") Integer id, Pageable pageable);
+
+    Page<Product> findByCategoryId(@Param("id") Integer id, Pageable pageable);
 
     Page<Product> findByNameContainingIgnoreCase(
             @Param("name") String name,
+            Pageable pageable
+    );
+
+    Page<Product> findByTitleContainingIgnoreCase(
+            @Param("title") String title,
             Pageable pageable
     );
 }

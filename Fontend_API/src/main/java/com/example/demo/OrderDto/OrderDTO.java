@@ -3,7 +3,7 @@ package com.example.demo.OrderDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
+ 
 public class OrderDTO {
 
     
@@ -24,6 +24,11 @@ public class OrderDTO {
     private String deliveryName;
     private Long deliveryPhone;
     private String deliveryAddress;
+    
+    private LocalDateTime orderCreated;
+
+   
+    private LocalDateTime orderUpdated;
     
      
     private List<OrderItemDTO> orderItems ;
@@ -156,6 +161,28 @@ public class OrderDTO {
 
 	public void setOrderItems(List<OrderItemDTO> orderItems) {
 		this.orderItems = orderItems;
+	}
+	
+	
+
+
+	public LocalDateTime getOrderCreated() {
+		return orderCreated;
+	}
+
+
+	public void setOrderCreated(LocalDateTime orderCreated) {
+		this.orderCreated = orderCreated;
+	}
+
+
+	public LocalDateTime getOrderUpdated() {
+		return orderUpdated;
+	}
+
+
+	public void setOrderUpdated(LocalDateTime orderUpdated) {
+		this.orderUpdated = orderUpdated;
 	}
 
 

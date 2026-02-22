@@ -204,6 +204,7 @@ public class OrderServiceClass {
 
         ShippingAddress existsAdd =
                 shippingAddressRepo.findByAddid(id);
+        
 
         if (existsAdd == null)
             throw new RuntimeException("Address Not Exists");
@@ -268,6 +269,18 @@ public class OrderServiceClass {
     	return rootUserId;
     	
     }
+    
+    public List<Order> getAllOrder(Long id){
+    	
+    	List<Order> orderList = order.findByRootUserId(id)
+    			.orElseThrow(()-> new RuntimeException("order not found"));
+    	
+    	
+    	return orderList;
+    	
+    }
+    
+    
     
      
 }

@@ -5,16 +5,11 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
+        body { background-color: #f8f9fa; }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -28,9 +23,7 @@
             z-index: 1050;
         }
 
-        .sidebar.open {
-            left: 0;
-        }
+        .sidebar.open { left: 0; }
 
         .sidebar a {
             padding: 10px;
@@ -40,9 +33,7 @@
             border-radius: 4px;
         }
 
-        .sidebar a:hover {
-            background-color: #f1f1f1;
-        }
+        .sidebar a:hover { background-color: #f1f1f1; }
 
         .overlay {
             position: fixed;
@@ -52,13 +43,15 @@
             z-index: 1040;
         }
 
-        .overlay.show {
-            display: block;
-        }
+        .overlay.show { display: block; }
 
         .product-card img {
             height: 180px;
             object-fit: contain;
+        }
+
+        .navbar-search {
+            width: 350px;
         }
     </style>
 </head>
@@ -66,18 +59,39 @@
 <body>
 
 <!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-dark bg-dark px-3">
-    <button class="btn btn-outline-light" onclick="openMenu()">
+<nav class="navbar navbar-dark bg-dark px-3 d-flex align-items-center">
+
+    <button class="btn btn-outline-light me-3" onclick="openMenu()">
         <i class="bi bi-list"></i>
     </button>
 
-    <span class="navbar-brand mx-auto fw-bold">MyShop</span>
+    <span class="navbar-brand fw-bold me-4">MyShop</span>
 
-<a th:href="@{/cart/view}">
-    <button class="btn btn-warning">
+    <!-- SEARCH -->
+    <form class="d-flex navbar-search me-auto"
+          th:action="@{/user/findProductName}"
+          method="get">
+
+        <input class="form-control me-2"
+               type="search"
+               name="keyword"
+               th:value="${keyword}"
+               placeholder="Search products..."
+               required>
+
+        <button class="btn btn-outline-light" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+    </form>
+
+    <a th:href="@{/user/my-orders}" class="btn btn-outline-info me-2">
+        <i class="bi bi-bag-check"></i> My Orders
+    </a>
+
+    <a th:href="@{/cart/view}" class="btn btn-warning">
         <i class="bi bi-cart"></i> Cart
-    </button>
-   </a>
+    </a>
+
 </nav>
 
 <!-- ================= SIDEBAR ================= -->
@@ -90,7 +104,7 @@
 
     <a th:each="cat : ${allcategory}"
        th:text="${cat.name}"
-       th:href="@{/user/getProduct(id=${cat.id})}">
+       th:href="@{/user/getProduct(id=${cat.id}, page=0)}">
     </a>
 </div>
 
@@ -109,47 +123,74 @@
         <div class="col-lg-3 col-md-4 col-sm-6"
              th:each="product : ${products}">
             <div class="card product-card shadow-sm h-100">
-            
-               <a th:href="@{/user/masterView(id=${product.id})}">
-    <img th:src="@{'http://localhost:8085/uploads/images/' + ${product.imgurl}}"
-         class="card-img-top"
-         alt="Product Image">
-              </a>
+
+                <a th:href="@{/user/masterView(id=${product.id})}">
+                    <img th:src="@{'http://localhost:8085/uploads/images/' + ${product.imgurl}}"
+                         class="card-img-top"
+                         alt="Product Image">
+                </a>
+
                 <div class="card-body text-center">
-    <h6 th:text="${product.title}" class="fw-semibold"></h6>
+                    <h6 th:text="${product.title}" class="fw-semibold"></h6>
 
-    <p class="text-success fw-bold mb-2">
-        ₹ <span th:text="${product.price}"></span>
-    </p>
+                    <p class="text-success fw-bold mb-2">
+                        ₹ <span th:text="${product.price}"></span>
+                    </p>
 
-    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
-        <button type="submit" class="btn btn-warning w-100">
-            Add to Cart
-        </button>
-    </form>
-</div>
+                    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                        <button type="submit" class="btn btn-warning w-100">
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
 
             </div>
         </div>
     </div>
 
-    <!-- ================= PAGINATION (OPTIONAL) ================= -->
-    <!-- Enable later when you pass page & totalPages -->
-    
-    <nav class="mt-5">
+    <!-- ================= PAGINATION ================= -->
+    <nav th:if="${totalPages > 1}" class="mt-5">
         <ul class="pagination justify-content-center">
-            <li class="page-item">
-                <a class="page-link" href="#">Previous</a>
+
+            <!-- PREV -->
+            <li class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'">
+
+                <a class="page-link"
+                   th:href="@{${url}(page=${currentPage-1},
+                                    keyword=${keyword},
+                                    id=${categoryId})}">
+                    Prev
+                </a>
             </li>
-            <li class="page-item active">
-                <a class="page-link" href="#">1</a>
+
+            <!-- PAGE NUMBERS -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                th:classappend="${currentPage == i} ? 'active'">
+
+                <a class="page-link"
+                   th:text="${i+1}"
+                   th:href="@{${url}(page=${i},
+                                    keyword=${keyword},
+                                    id=${categoryId})}">
+                </a>
             </li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next</a>
+
+            <!-- NEXT -->
+            <li class="page-item"
+                th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+
+                <a class="page-link"
+                   th:href="@{${url}(page=${currentPage+1},
+                                    keyword=${keyword},
+                                    id=${categoryId})}">
+                    Next
+                </a>
             </li>
+
         </ul>
     </nav>
-    -->
 
 </div>
 

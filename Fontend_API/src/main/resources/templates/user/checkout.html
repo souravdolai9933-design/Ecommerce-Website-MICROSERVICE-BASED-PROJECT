@@ -16,19 +16,9 @@
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
-        body {
-            background-color: #f1f3f6;
-        }
-
-        .checkout-container {
-            max-width: 1000px;
-            margin: 40px auto;
-        }
-
-        .card {
-            border-radius: 12px;
-        }
-
+        body { background-color: #f1f3f6; }
+        .checkout-container { max-width: 1000px; margin: 40px auto; }
+        .card { border-radius: 12px; }
         .address-box {
             border: 1px solid #ddd;
             border-radius: 10px;
@@ -36,39 +26,24 @@
             margin-bottom: 12px;
             position: relative;
         }
-
         .address-box:hover {
             border-color: #0d6efd;
             background-color: #f8f9fa;
         }
-
         .address-actions {
             position: absolute;
             right: 12px;
             top: 12px;
         }
-
         .address-actions i {
             font-size: 18px;
             margin-left: 12px;
             cursor: pointer;
             color: #555;
         }
-
-        .address-actions i:hover {
-            color: #0d6efd;
-        }
-
-        .pay-btn {
-            font-size: 18px;
-            padding: 14px;
-        }
-
-        /* ===== STICKY ORDER SUMMARY ===== */
-        .order-summary {
-            position: sticky;
-            top: 20px;
-        }
+        .address-actions i:hover { color: #0d6efd; }
+        .pay-btn { font-size: 18px; padding: 14px; }
+        .order-summary { position: sticky; top: 20px; }
     </style>
 </head>
 
@@ -76,7 +51,7 @@
 
 <div class="container checkout-container">
 
-    <!-- ================= FLASH MESSAGE ================= -->
+    <!-- FLASH MESSAGE -->
     <div th:if="${sucmsg}" id="flashMsg" class="alert alert-success text-center">
         <span th:text="${sucmsg}"></span>
     </div>
@@ -89,15 +64,43 @@
 
                 <h4 class="mb-3">Delivery Address</h4>
 
-                <!-- ADDRESS OPTIONS -->
-                <div class="mb-3">
-                    <input type="radio" name="addressOption" value="current" checked onclick="toggleAddress()"> Current
-                    <input type="radio" name="addressOption" value="existing" class="ms-4" onclick="toggleAddress()"> Existing
-                    <input type="radio" name="addressOption" value="new" class="ms-4" onclick="toggleAddress()"> New
-                </div>
+               <!-- ================= ADDRESS OPTIONS ================= -->
+<div class="mb-3">
 
+    <!-- Current (Default Address) -->
+    <label th:if="${hasDefaultAddress}" class="me-3">
+        <input type="radio"
+               name="addressOption"
+               value="current"
+               th:checked="${hasDefaultAddress}"
+               onclick="toggleAddress()">
+        Current
+    </label>
+
+    <!-- Existing Addresses -->
+    <label th:if="${hasExistingAddress}" class="me-3">
+        <input type="radio"
+               name="addressOption"
+               value="existing"
+               onclick="toggleAddress()">
+        Existing
+    </label>
+
+    <!-- New Address (Always Visible) -->
+    <label>
+        <input type="radio"
+               name="addressOption"
+               value="new"
+               th:checked="${!hasDefaultAddress and !hasExistingAddress}"
+               onclick="toggleAddress()">
+        New
+    </label>
+
+</div>
                 <!-- ================= CURRENT ADDRESS ================= -->
-                <div id="currentAddressSection">
+                <div id="currentAddressSection"
+                     th:if="${hasDefaultAddress}">
+
                     <div class="address-box">
 
                         <div class="address-actions">
@@ -127,7 +130,10 @@
                 </div>
 
                 <!-- ================= EXISTING ADDRESSES ================= -->
-                <div id="existingAddressSection" style="display:none;">
+                <div id="existingAddressSection"
+                     style="display:none;"
+                     th:if="${hasExistingAddress}">
+
                     <div th:each="addr : ${shippingAdresslist}" class="address-box">
 
                         <div class="address-actions">
@@ -152,8 +158,10 @@
                     </div>
                 </div>
 
-                <!-- ================= NEW ADDRESS (NO SUBMIT BUTTON) ================= -->
-                <div id="newAddressSection" style="display:none;">
+                <!-- ================= NEW ADDRESS ================= -->
+                <div id="newAddressSection"
+                     th:style="${!hasDefaultAddress} ? 'display:block;' : 'display:none;'">
+
                     <h5>Add New Address</h5>
 
                     <div class="row">
@@ -184,7 +192,7 @@
             </div>
         </div>
 
-        <!-- ================= RIGHT SIDE (STICKY) ================= -->
+        <!-- ================= RIGHT SIDE ================= -->
         <div class="col-md-4">
             <div class="card shadow-sm p-4 order-summary">
                 <h5>Order Summary</h5>
@@ -203,25 +211,27 @@
 <!-- ================= SCRIPT ================= -->
 <script>
 function toggleAddress() {
-    const option = document.querySelector('input[name="addressOption"]:checked').value;
 
-    document.getElementById("currentAddressSection").style.display = option === "current" ? "block" : "none";
-    document.getElementById("existingAddressSection").style.display = option === "existing" ? "block" : "none";
-    document.getElementById("newAddressSection").style.display = option === "new" ? "block" : "none";
+    const selectedRadio = document.querySelector('input[name="addressOption"]:checked');
+    if (!selectedRadio) return;
+
+    const option = selectedRadio.value;
+
+    const current = document.getElementById("currentAddressSection");
+    const existing = document.getElementById("existingAddressSection");
+    const newSec = document.getElementById("newAddressSection");
+
+    if(current) current.style.display = option === "current" ? "block" : "none";
+    if(existing) existing.style.display = option === "existing" ? "block" : "none";
+    if(newSec) newSec.style.display = option === "new" ? "block" : "none";
 }
 
 function placeOrder() {
 
     const option = document.querySelector('input[name="addressOption"]:checked').value;
 
-    let payload = {
-        checkout: {},
-        newAddress: null
-    };
+    let payload = { checkout: {}, newAddress: null };
 
-    console.log("Selected option 👉", option);
-
-    // ================= CURRENT / EXISTING ADDRESS =================
     if (option === "current" || option === "existing") {
 
         const selected = document.querySelector('input[name="selectedAddress"]:checked');
@@ -234,7 +244,6 @@ function placeOrder() {
         payload.checkout.existingAddressId = Number(selected.value);
     }
 
-    // ================= NEW ADDRESS =================
     if (option === "new") {
 
         payload.newAddress = {
@@ -247,7 +256,6 @@ function placeOrder() {
             zipcode: document.getElementById("zipcode").value
         };
 
-        // Basic validation
         for (const key in payload.newAddress) {
             if (!payload.newAddress[key]) {
                 alert("Please fill all address fields");
@@ -256,13 +264,9 @@ function placeOrder() {
         }
     }
 
-    console.log("FINAL PAYLOAD 🚀", payload);
-
     fetch("/cart/place-Order", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     })
     .then(res => res.json())
@@ -270,7 +274,6 @@ function placeOrder() {
     .catch(err => console.error("Order error:", err));
 }
 
-// ================= RAZORPAY =================
 function openRazorpay(order) {
     new Razorpay({
         key: "rzp_test_SBA3kqiat8sYVm",
@@ -295,13 +298,11 @@ function verifyPayment(response) {
     });
 }
 
-// ================= FLASH MESSAGE =================
 setTimeout(() => {
     const msg = document.getElementById("flashMsg");
     if (msg) msg.style.display = "none";
 }, 5000);
 </script>
-
 
 </body>
 </html>

@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.Dto.PagedResponse;
 import com.example.demo.Dto.ProductCategoryDTO;
 import com.example.demo.Dto.ProductDTO;
-import com.example.demo.RootcustomerDTO.ErrorResponse;
+import com.example.demo.OrderDto.OrderDTO;
 import com.example.demo.RootcustomerDTO.LoginUserRequestDTO;
 import com.example.demo.RootcustomerDTO.RegistrationRequestDTO;
  
@@ -41,20 +42,51 @@ public class UserController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
             Model model, HttpSession session) {
+    	
+    	System.out.println("*********I am Hitted Get All *****");
 
-        List<ProductDTO> products = service.getAllProduct(page, size);
+        PagedResponse<ProductDTO> response = service.getAllProduct(page, size);
         
+        System.out.println("All product :->"+response);
+
         List<ProductCategoryDTO> categories = service.getAllCategory();
+        
+        System.out.println("Fins All Category :"+categories);
 
-        model.addAttribute("products", products);
-        
+        System.out.println("Total Response :"+response);
+        model.addAttribute("products", response.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", response.getTotalPages());
+        model.addAttribute("url", "/user/all");
+
         model.addAttribute("allcategory", categories);
-        
         session.setAttribute("allcategory", categories);
-        
+
         return "user/userHome";
     }
+    
+    @GetMapping("/findProductName")
+    public String GetProductByName(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model, HttpSession session) {
 
+        PagedResponse<ProductDTO> response = service.getProductByName(keyword, page, size);
+
+        List<ProductCategoryDTO> categories = service.getAllCategory();
+
+        model.addAttribute("products", response.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", response.getTotalPages());
+        model.addAttribute("url", "/user/findProductName");
+        model.addAttribute("keyword", keyword);
+
+        model.addAttribute("allcategory", categories);
+        session.setAttribute("allcategory", categories);
+
+        return "user/userHome";
+    }
     @GetMapping("/getProduct")
     public String getProductBythroughTheCategry(
             @RequestParam Long id,
@@ -62,13 +94,43 @@ public class UserController {
             @RequestParam(defaultValue = "8") int size,
             Model model, HttpSession session) {
 
-        List<ProductDTO> products = service.getProductByCategory(id, page, size);
-        
-        model.addAttribute("products", products);
+        PagedResponse<ProductDTO> response = service.getProductByCategory(id, page, size);
+
+        model.addAttribute("products", response.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", response.getTotalPages());
+        model.addAttribute("url", "/user/getProduct");
+        model.addAttribute("categoryId", id);
+
         model.addAttribute("allcategory", session.getAttribute("allcategory"));
 
         return "user/userHome";
     }
+    
+    @GetMapping("/my-orders")
+    public String getAllUserOrder(Model model,HttpServletRequest req) {
+    	
+    	
+    	System.out.println("I am inside My order mth....");
+    	
+    	List<OrderDTO> orderList = null;
+    	try {
+    	   orderList = service.getAllOrderByRootUser(req);
+    	}catch(Exception ex) {
+    		ex.printStackTrace();
+    		System.out.println("User order not avaliable");
+    	}
+    	if(orderList.isEmpty() || orderList ==null) {
+    		
+    	}else {
+    		
+    		model.addAttribute("orderlist",orderList);
+    	}
+    	
+    	return "user/myorder";
+    	
+    }
+    
     
     @GetMapping("/masterView")
     public String PeoductMasterView(@RequestParam Long id, Model model,HttpSession session) {
@@ -167,8 +229,6 @@ public class UserController {
         // ✅ SUCCESS
         return "redirect:/user/all";
     }
-    
-
 }
 
      

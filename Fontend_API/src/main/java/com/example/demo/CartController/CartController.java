@@ -67,57 +67,75 @@ public class CartController {
     }
 
     // ================= CHECKOUT PAGE =================
+ // ================= CHECKOUT PAGE =================
     @GetMapping("/checkout")
     public String getCheckoutPage(Model model , HttpServletRequest request ) {
-    	System.out.println("***********I am inside Get Check Out page Methde*******");
-    	
-    	
-    	HttpSession session = request.getSession(true);
-    	
-      Cart cart2 = (Cart) session.getAttribute("cart");
-        
-        System.out.println("Cart item  "+cart2.getGrandTotal());
-          Long totalItem = cart2.getItems().stream().count();
-          
-          BigDecimal totalAmount = cart2.getGrandTotal();
-          model.addAttribute("totalItems", totalItem);
-          model.addAttribute("totalPrice",totalAmount);
 
-    	
-    	Long rootUserId = productService.getRootUserId();
-    	
-    	System.out.println("Root Id find sucessfully..");
-    	
-    	List<ShippingAddressDTO> shippingAddressList = productService.getShippingAddress(rootUserId, request);
-    	
-    	System.out.println("All Adress find Sucessfully from current user...");
-    	
-    	System.out.println("Shipping Address coming From back :"+shippingAddressList);
-    	// Existing Adresss
-    	model.addAttribute("shippingAdresslist",shippingAddressList);
-    	
-    	
-    	
-    	//  New Checkout Address
-    	CheckoutRequestDTO newCheckout = new CheckoutRequestDTO();
-    	newCheckout.setShippingAddress(new ShippingAddressDTO());
-    	
-    	System.out.println("Empth Obj create Sucessfully...");
-    	
+        System.out.println("***********I am inside Get Check Out page Method*******");
 
-    	// default address
-        CheckoutRequestDTO defaultcheckout = new CheckoutRequestDTO();
-        defaultcheckout.setShippingAddress(productService.getDefaultAddress(rootUserId,request));
-        
-        System.out.println("Default Address find sucessfully...");
-        
-        System.out.println("Default Checkout "+defaultcheckout);
-        
-        System.out.println("Get Checkout Methode "+defaultcheckout);
+        HttpSession session = request.getSession(true);
 
-        model.addAttribute("defaultcheckout", defaultcheckout);
+        Cart cart2 = (Cart) session.getAttribute("cart");
+
+        if(cart2 != null){
+            Long totalItem = cart2.getItems().stream().count();
+            BigDecimal totalAmount = cart2.getGrandTotal();
+
+            model.addAttribute("totalItems", totalItem);
+            model.addAttribute("totalPrice", totalAmount);
+        }
+
+        Long rootUserId = productService.getRootUserId();
+
+        // ================= EXISTING ADDRESS =================
+        List<ShippingAddressDTO> shippingAddressList = new ArrayList<>();
+        boolean hasExistingAddress = false;
+
+        try {
+            shippingAddressList = productService.getShippingAddress(rootUserId, request);
+
+            if (shippingAddressList != null && !shippingAddressList.isEmpty()) {
+                hasExistingAddress = true;
+                model.addAttribute("shippingAdresslist", shippingAddressList);
+            }
+
+        } catch (Exception ex) {
+            System.out.println("No Existing Address Found");
+        }
+
+        model.addAttribute("hasExistingAddress", hasExistingAddress);
+
+
+        // ================= DEFAULT ADDRESS =================
+        CheckoutRequestDTO defaultcheckout = null;
+        boolean hasDefaultAddress = false;
+
+        try {
+            ShippingAddressDTO defaultAddress =
+                    productService.getDefaultAddress(rootUserId, request);
+
+            if (defaultAddress != null) {
+                defaultcheckout = new CheckoutRequestDTO();
+                defaultcheckout.setShippingAddress(defaultAddress);
+
+                hasDefaultAddress = true;
+                model.addAttribute("defaultcheckout", defaultcheckout);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Default Address not found...");
+        }
+
+        model.addAttribute("hasDefaultAddress", hasDefaultAddress);
+
+
+        // ================= NEW ADDRESS OBJECT =================
+        CheckoutRequestDTO newCheckout = new CheckoutRequestDTO();
+        newCheckout.setShippingAddress(new ShippingAddressDTO());
         model.addAttribute("newcheckout", newCheckout);
-        System.out.println("*****Methode END***********");
+
+        System.out.println("*****Method END***********");
+
         return "user/checkout";
     }
 
